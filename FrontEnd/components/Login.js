@@ -16,37 +16,6 @@ const Sign = ({close, type, onLoginSuccess}) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user); 
 
-
-    // const sign = async() => {
-    //     const resp = await fetch(`http://localhost:3000/users/${type ? 'signin' : 'signup'}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(
-    //             type
-    //               ? { username: userName, password }
-    //               : { username: userName, password, name }
-    //         ),
-    //     });
-    //     const data = await resp.json();
-    
-    //     if (data.result) {
-    //         dispatch(connect({
-    //             username: data.username,
-    //             token: data.token,
-    //             bestScore: data.bestScore,
-    //         }));
-    //         close(false);
-    //         router.push('/');
-    //         if (onLoginSuccess) onLoginSuccess();
-    //         console.log(data.bestScore);
-    //     } else {
-    //         alert(data.error);
-    //     }
-    //     console.log(data);
-    // }
-
     const sign = async () => {
         const bodyObj = type
         ? { username: userName, password }

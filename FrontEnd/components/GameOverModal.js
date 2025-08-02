@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { connect } from "../reducers/user"; // ton reducer
+import { connect } from "../reducers/user";
 
 
 import styles from "../styles/GameOverModal.module.css";
@@ -16,11 +16,7 @@ const bestScore = useSelector(state => state.user.bestScore);
 const [bestScoreUser, setBestScoreUser] = useState(0);
 const [showFirework, setShowFirework] = useState(false);
 
-const [top3Scores, setTop3Scores] = useState([
-  // { username: data.top3Scores.username[0], score: data.top3Scores.score[0] },
-  // { username: data.top3Scores.username[1], score: data.top3Scores.score[1] },
-  // { username: data.top3Scores.username[2], score: data.top3Scores.score[2] }
-]);
+const [top3Scores, setTop3Scores] = useState([]);
 
 function playFireworkAnimation() {
   setShowFirework(true);

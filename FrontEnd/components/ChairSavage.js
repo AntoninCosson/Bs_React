@@ -2,10 +2,10 @@ import { useState } from "react";
 import homeStyles from "../styles/Home.module.css";
 
 function ChairSavage({ chairRef, onFinish }) {
-  const [chairClickCount, setChairClickCount] = useState(0); // Chair click count start at 0
+  const [chairClickCount, setChairClickCount] = useState(0);
 
   const getNoNoNoZone = () => {
-    const safePortfolio = document.querySelector(`.${homeStyles.divPortfolio}`); // verif homeStyles.divShop si bonne div
+    const safePortfolio = document.querySelector(`.${homeStyles.divPortfolio}`); 
     const safeShop = document.querySelector(`.${homeStyles.divShop}`);
     const safeNextGuest = document.querySelector(`.${homeStyles.divNextGuest}`);
     return [safePortfolio, safeShop, safeNextGuest].map((el) =>
@@ -13,17 +13,14 @@ function ChairSavage({ chairRef, onFinish }) {
     );
   };
 
-  // Create Safe Zone
   const getYesYesYesZone = (zones) => {
     let x, y;
     let safe = false;
 
-    // While it's safe create a random pos
     while (!safe) {
       x = Math.floor(Math.random() * window.innerWidth);
       y = Math.floor(Math.random() * window.innerHeight);
 
-      // Check if safe
       safe = zones.every((zone) => {
         const outside =
           x < zone.left || x > zone.right || y > zone.bottom || y < zone.top;
@@ -47,12 +44,10 @@ function ChairSavage({ chairRef, onFinish }) {
       () => {
         chairImg.classList.remove(homeStyles.animate);
 
-        // Calc of safe Position after anim
         setTimeout(() => {
           const NoNoNoZone = getNoNoNoZone();
           const { x, y } = getYesYesYesZone(NoNoNoZone);
 
-          // New pos
           chairDiv.style.left = `${x}px`;
           chairDiv.style.top = `${y}px`;
           chairDiv.style.display = "block";
