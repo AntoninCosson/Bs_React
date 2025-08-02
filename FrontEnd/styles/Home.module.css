@@ -1,0 +1,144 @@
+.body {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  flex-direction: column;
+}
+
+/* Header */
+
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btnConnect{
+
+  cursor: pointer;
+  margin: 1%;
+}
+
+.Displayusername{
+  font-size: 12px;
+}
+
+/* .Portfolio .Shop .NextGuest */
+
+.bigButtons {
+  margin: auto;
+  width: 70vw;
+  height: 50vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-self: center;
+  align-self: center;
+  transform: translateY(-5%);
+}
+
+.divPortfolio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Portfolio {
+  width: 80%;
+}
+
+.divShop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Shop {
+  width: 50%;
+  transform: translateX(-2%);
+}
+
+.divNextGuest {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.NextGuest {
+  width: 92%;
+  transform: translateY(-6%);
+}
+
+.svgButton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+/*  */
+
+/* whereIsChair */
+
+.divWhereIsChair {
+  /* display: flex;
+  justify-content: center; */
+  width: 27%;
+  position: absolute;
+  top: 63%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  background: none;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
+
+.whereIsChair {
+  width: 50%;
+}
+
+.btnWhereIsChair {
+  width: 50%;
+}
+
+/* anim click */
+
+.Chair {
+  width: 3.5%;
+}
+
+.positionedChair {
+  position: absolute;
+  bottom: 33%;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.Chair.animate {
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  40% {
+    transform: scale(1.25) translateY(-30px);
+  }
+  70% {
+    transform: scale(0.95) translateY(5px);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}

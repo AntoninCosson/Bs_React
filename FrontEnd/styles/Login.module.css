@@ -1,0 +1,87 @@
+
+.body{
+    display: flex;
+}
+
+.login{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerTexts{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.close{
+    height: 8%;
+    width: 15%;
+    position: absolute;
+    align-self: right;
+    justify-self: right;
+    top: -10%;
+    right: -10%;
+    cursor: pointer;
+}
+
+.logout{
+    margin-right: 1%;
+    cursor: pointer;
+}
+
+.logoutcontainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeLogout{
+    height: 120%;
+    cursor: pointer;
+    
+}
+
+.closeOut{
+    height: 15%;
+    width: 15%;
+    position: absolute;
+    align-self: right;
+    justify-self: right;
+    top: -10%;
+    right: -10%;
+    cursor: pointer;
+}
+
+.ThisChairsign{
+    margin-bottom: 10%;
+}
+
+.input{
+    margin: 3%; 
+}
+
+.signin{
+    margin: 10%;
+    cursor: pointer;
+}
+
+.buttonSignUp{
+    cursor: pointer;
+}
+
+.buttonSignin{
+    cursor: pointer;
+}
