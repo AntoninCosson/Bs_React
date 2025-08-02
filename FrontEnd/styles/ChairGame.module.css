@@ -31,15 +31,16 @@
 }
 
 .yourScoreText{
-   font-size: 1.6vw;
-   margin-left: 7%;
-   width: 5ch;
-  text-align: right;
+    font-size: 1.6vw;
+    margin-left: 7%;
+    width: 5ch;
+    text-align: right;
 }
 
 .yourScoreSvg{
     display: block;
 }
+
 
 .canvasStack{
     position: relative;

@@ -6,6 +6,7 @@ import { connect } from "../reducers/user";
 import styles from "../styles/GameOverModal.module.css";
 
 
+
 export default function GameOverModal({ score, onRestart }) {
 
 const dispatch = useDispatch();
@@ -94,14 +95,17 @@ function playFireworkAnimation() {
 
   return (
 <div className={styles.overlay}>
+
   <div className={styles.modal}>
 
   {showFirework && (
-  <img 
-    src="/Anim/clicportfolio.gif"
-    className={styles.firework}
-    alt="Firework animation"
-  />
+  <div className={styles.fireworkDiv}>
+      <img 
+        src="/Anim/clicportfolio.gif"
+        className={styles.firework}
+        alt="Firework animation"
+      />
+  </div>
 )}
 
     <img
