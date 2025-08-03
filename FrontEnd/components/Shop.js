@@ -1,31 +1,49 @@
-import movieStyles from "../styles/Movie.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import shopStyle from "../styles/Shop.module.css";
 
-const Movie = ({ title = "Name", desc = "Description", votes = 8 }) => {
-  const totalStars = 10;
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+
+import Product from "./Product";
+import { setProducts } from "../reducers/shop";
+
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+// const Shop = ({ title = "Name", desc = "Description", votes = 8 }) => {
+const Shop = ({}) => {
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
+
+  // const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+
+    fetch("http://localhost:3000/shop")
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(setProducts(data.products));
+        console.log(data.products)
+      });
+
+
+  }, [dispatch]);
+
+  // const product = products.map((data, i) => {
+  //   return <Product key={i} {...data}/>;
+  // });
+
+
   return (
-    <div className={movieStyles.parent}>
-      <div className={movieStyles.movie}>
-        <img src="/poster.jpg" alt="Poster" className={movieStyles.poster} />
-        <div className={movieStyles.name}>Name</div>
-        <div className={movieStyles.description}>Description</div>
-        <div className={movieStyles.vote}>
-          {[...Array(totalStars)].map((_, i) => (
-            <FontAwesomeIcon
-              key={i}
-              icon={faStar}
-              style={{
-                color: i < votes ? "#FFD700" : "#ccc",
-                marginRight: "2px",
-              }}
-            />
-          ))}
-          <span style={{ marginLeft: "5px" }}>({votes} votes)</span>
-        </div>
+
+    <div className={shopStyle.body}>
+      <div className={shopStyle.product}>
+       <Product/>
       </div>
     </div>
+
   );
 };
 
-export default Movie;
+export default Shop;

@@ -10,6 +10,7 @@ import loginStyles from '../styles/Login.module.css'
 // import "antd/dist/antd.css";
 // import { Button, Popover } from "antd";
 
+import Shop from "./Shop"
 import WhereIsChairButton from "./WhereIsChairButton";
 import ChairSavage from "./ChairSavage";
 import ChairGame from "./ChairGame";
@@ -31,6 +32,7 @@ function HomeButtons() {
   const [signin, setSignin] = useState(false);
   const [signup, setSignup] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [isShopClicked, setIsShopClicked] = useState(false);
 
   const isLogged = useSelector((state) => state.user.connected);
   const user = useSelector((state) => state.user);
@@ -99,6 +101,15 @@ function HomeButtons() {
                 ref={shopRef}
                 className={homeStyles.Shop}
                 src="/EcrisIcon/home-SHOP.svg"
+                onClick={() => {
+                  setShowLogin(false);
+                  setSignin(false);
+                  setSignup(false);
+                  setAreButtonHomesVisible(false);
+                  setShowWhereIsChairBtn(false);
+                  setIsShopClicked(true)
+                  
+                }}
               />
             </button>
           </div>
@@ -207,6 +218,14 @@ function HomeButtons() {
         </button>
       </div>
       )}
+
+      {isShopClicked && (
+        <Shop
+        username={user.username}
+        />
+      )
+
+      }
 
       {showWhereIsChairBtn && (
         <WhereIsChairButton

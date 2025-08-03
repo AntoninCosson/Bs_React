@@ -6,5 +6,8 @@ mongoose.connect(connectionString, {
     connectTimeoutMS: 2000,
     dbName: 'BsReact',
   })
- .then(() => console.log('Database connected'))
+ .then(() => {
+  console.log('Database connected')
+  console.log("Base actuelle :", mongoose.connection.name);
+})
  .catch(error => console.error(error));
