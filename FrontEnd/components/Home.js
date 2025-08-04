@@ -107,6 +107,9 @@ function HomeButtons() {
                   setSignup(false);
                   setAreButtonHomesVisible(false);
                   setShowWhereIsChairBtn(false);
+                  setIsShopClicked(false);
+                  setIsChairVisible(false);
+                  setisChairSavageClicked(false);
                   setIsShopClicked(true)
                   
                 }}

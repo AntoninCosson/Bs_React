@@ -10,13 +10,10 @@ import { setProducts } from "../reducers/shop";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-// const Shop = ({ title = "Name", desc = "Description", votes = 8 }) => {
 const Shop = ({}) => {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-
-  // const [products, setProducts] = useState([]);
 
   useEffect(() => {
 
@@ -29,11 +26,6 @@ const Shop = ({}) => {
 
 
   }, [dispatch]);
-
-  // const product = products.map((data, i) => {
-  //   return <Product key={i} {...data}/>;
-  // });
-
 
   return (
 
