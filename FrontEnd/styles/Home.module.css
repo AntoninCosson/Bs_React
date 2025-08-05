@@ -83,13 +83,13 @@
 
 .btnCartCount{
   position: absolute;
-  top: -50%;
-  left: 66%;
+  top: -70%;
+  left: 55%;
   margin: 3%;
-  font-size: 11px;
+  font-size: 10px;
   background: rgba(255,255,255,0.8);
   border-radius: 10px;
-  padding: 3%;
+  padding: 12%;
 }
 
 .Displayusername{
