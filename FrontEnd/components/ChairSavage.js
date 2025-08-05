@@ -56,7 +56,7 @@ function ChairSavage({ chairRef, onFinish }) {
           console.log("Click count:", newCount);
           setChairClickCount(newCount);
 
-          if (newCount === 1) {
+          if (newCount === 3) {
             chairDiv.style.display = "none";
             setTimeout(() => {
               onFinish();

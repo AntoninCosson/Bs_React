@@ -30,6 +30,7 @@
     opacity: 1;
     pointer-events: auto;
     transform: translateY(2%);
+    
 }
 
 .Product:hover .img{

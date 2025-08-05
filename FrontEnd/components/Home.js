@@ -7,8 +7,7 @@ import loginstyle from "../styles/Login.module.css";
 import loginStyles from '../styles/Login.module.css'
 
 
-// import "antd/dist/antd.css";
-// import { Button, Popover } from "antd";
+import { removeFromCart } from "../reducers/shop";
 
 import Shop from "./Shop"
 import WhereIsChairButton from "./WhereIsChairButton";
@@ -41,6 +40,7 @@ function HomeButtons() {
   const isLogged = useSelector((state) => state.user.connected);
   const user = useSelector((state) => state.user);
   const cart = useSelector((state) => state.shop.cartList);
+  const products = useSelector((state) => state.shop.products); 
   const dispatch = useDispatch();
 
 
@@ -76,18 +76,17 @@ function HomeButtons() {
     setShowWhereIsChairBtn(true);
   };
 
-  const handleClicCart = () => {
-    setCartHoverVisible(prev => !prev);
+  const handleDeleteOneCart = (prod, idx) => {
+    dispatch(removeFromCart({ index: idx }));
   };
-
-console.log("click:", clickCount);
-console.log("cartHoverVisible:", cartHoverVisible);
 
 
   return (
-    <div className={homeStyles.body}>
+  <div className={homeStyles.body}>
+    {/* Header */}
+    <div className={homeStyles.header}>
 
-      <div className={homeStyles.header}>
+      <div className={homeStyles.headerBtnBlock}>
         { isLogged && (
           <h2 className={homeStyles.Displayusername}>@{user.username}</h2>
         )}
@@ -98,52 +97,79 @@ console.log("cartHoverVisible:", cartHoverVisible);
           onClick={() => handleShowLogin()}
         />
 
-        <div 
-          className={homeStyles.btnCartDiv}
+        <div className={homeStyles.btnCartDiv}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
+              <FontAwesomeIcon 
+                icon={faCartShopping}
+                className={homeStyles.btnCart}>
+              </FontAwesomeIcon>
+              <div className={homeStyles.btnCartCount}>        
+                {cart.length}
+              </div>  
           
-          <FontAwesomeIcon 
-            icon={faCartShopping}
-            className={homeStyles.btnCart}
-          />
 
-          <div className={homeStyles.btnCartCount}>        
-              {cart.length}
-          </div>
+        </div>  
+      </div>
+  {/* Hover */}
+  <div
+    className={homeStyles.cartWrapper}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+  ></div>
 
-          { (cartHoverVisible || isHovered ) && (
-          <div className={homeStyles.btnCartHover}>
+                                              {/*  */}
+  <div className={`${homeStyles.btnCartHover} ${isHovered ? homeStyles.show : ""}`}>
+      <div
+      className={homeStyles.cartWrapper2}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}>
           <div className={homeStyles.overflow}>
             {cart.map((data, i) => (
               <div key={i}>
                 <div className={homeStyles.cartContainer}>
-                  <div>{data.name} 10</div>
-                  <div>{data.size} 1</div>
-                  <div>{data.price} 1</div>
-                  <div>x</div>
+                  <div>
+                      <div
+                      className={homeStyles.nameInCart}>
+                        {data.name}
+                      </div>
+                      <div
+                      className={homeStyles.sizeInCart}>
+                        {data.size}
+                      </div>
+                      <div
+                      className={homeStyles.priceInCart}>
+                        {data.price}€
+                      </div>
+                  </div>
+                  <div className={homeStyles.btnDeleteWraper}>
+                      <div
+                      className={homeStyles.btnDelete}
+                      onClick={() => handleDeleteOneCart(data, i)}>
+                        x
+                      </div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+      </div>
           <div className={homeStyles.cartFooter}>
-            <div>Payer</div>
+          <div
+            className={homeStyles.cartWrapper3}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}>
+                <div>Payer</div>
           </div>
         </div>
-        )}
+  </div>
 
-<div
-          className={homeStyles.cartWrapper}
-          onClick={handleClicCart}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        ></div>
-        </div>
+    </div>
+    {/* Fin header */}
 
-        
 
-      </div>
+    {/* Big Buttons */}
       {areButtonHomesVisible && (
         <div className={homeStyles.bigButtons}>
           <div ref={portfolioRef} className={homeStyles.divPortfolio}>

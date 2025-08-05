@@ -16,6 +16,10 @@ export const shopSlice = createSlice({
     setCartList: (state, action) => {
       state.cartList.push(action.payload);
     },
+    removeFromCart: (state, action) => {
+      const { index } = action.payload;
+      state.cartList = state.cartList.filter((_, i) => i !== index);
+    },
     clearCart: (state) => {
       state.cartList = [];
     },
@@ -26,5 +30,5 @@ export const shopSlice = createSlice({
   },
 });
 
-export const { setProducts, setCartList, clearCart, cartTimeLeft, resetShop } = shopSlice.actions
+export const { setProducts, setCartList, clearCart, cartTimeLeft, resetShop, removeFromCart } = shopSlice.actions
 export default shopSlice.reducer
