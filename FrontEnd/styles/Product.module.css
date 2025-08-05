@@ -114,14 +114,14 @@
 .AddedAnimDiv {
     position: absolute;
     top: -39%;
-    transform: translate(101%, -28%);
+    transform: translate(188%, 33%);
     z-index: 1000;
     pointer-events: none;
     rotate: 23deg;
 }
 
 .AddedAnim{
-    width: 223%
+    width: 267%
 }
 
 

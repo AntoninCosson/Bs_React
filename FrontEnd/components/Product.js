@@ -1,37 +1,36 @@
+
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setCartList } from "../reducers/shop";
-import Image from "next/image";
+import { setCartList, resetShop } from "../reducers/shop";
+
 import prodStyles from "../styles/Product.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 
 function Product() {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
-  const products = useSelector((state) => state.shop.products);
+    
+const dispatch = useDispatch();
+const user = useSelector((state) => state.user.value);
+const products = useSelector((state) => state.shop.products);   
+const [showAddedAnimation, setShowAddedAnimation] = useState(false);
+const [jumpAddIndex, setJumpAddIndex] = useState(null);
+const [jumpLikeIndex, setJumpLikeIndex] = useState(null); 
 
-  const [cartList, setCartList] = useState([]);
-  const [showAddedAnimation, setShowAddedAnimation] = useState(false);
-  const [jumpAddIndex, setJumpAddIndex] = useState(null);
-  const [jumpLikeIndex, setJumpLikeIndex] = useState(null);
-
-  const handleLike = (product, idx) => {
-    setCartList((prevCart) => [...prevCart, product]);
+const handleLike = (product, idx) => {
+    dispatch(setCartList(product))
     setShowAddedAnimation(idx);
     setJumpAddIndex(idx);
     setTimeout(() => setJumpAddIndex(null), 300);
-    // dispatch(setCartList(product))
     // setTimeout(() => setShowAddedAnimation(null), 111210);
     setTimeout(() => setShowAddedAnimation(null), 1210);
-  };
+};
 
-useEffect(() => {
-    console.log(cartList);
-  }, [cartList]);
+// console.log("products:", products)
 
-  return (
+return (
     <div className={prodStyles.body}>
-        { products.map((data,i)=>{
+        {products.map((data,i)=>{
             return (
             <div className={prodStyles.containerProducts}>
                 <div key={i} className={prodStyles.Product}>
@@ -78,9 +77,12 @@ useEffect(() => {
                         </div>
 
                         <div className={prodStyles.btns}>
-                        <div className={prodStyles.btnLike}>
-                            Add
-                        </div>
+                            <div
+                                icon={faCartShopping}
+                                className={ prodStyles.btnAddToCart}
+                            >
+                                -3
+                            </div>
                         
                         <div className={prodStyles.btnAndanimDiv}>
                             {showAddedAnimation === i && (
@@ -91,25 +93,25 @@ useEffect(() => {
                                         alt="Added animation"
                                     />
                                 </div>
+                                
                             )}
-                            <div 
+                            <FontAwesomeIcon
+                                icon={faCartShopping}
                                 className={ prodStyles.btnAddToCart + (jumpAddIndex === i ? ' ' + prodStyles.btnJump : '') }
                                     onClick={() => handleLike(data, i)}
                                 >
-                                Love
-                            </div>
+                                {/* Love */}
+                            </FontAwesomeIcon>
                         </div>
                     </div>
                     </div>
-    </div>
+                </div>
             </div>
         </div>
         )
-        })
-
-        }
+    })}
         </div>
-  );
+    );
 };
 
 export default Product;

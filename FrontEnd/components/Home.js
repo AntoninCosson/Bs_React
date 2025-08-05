@@ -18,7 +18,7 @@ import Login from "./Login"
 
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 function HomeButtons() {
   const shopRef = useRef(null); // Pour manip hors DOM
@@ -34,8 +34,13 @@ function HomeButtons() {
   const [showLogin, setShowLogin] = useState(false);
   const [isShopClicked, setIsShopClicked] = useState(false);
 
+  const [cartHoverVisible, setCartHoverVisible] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
   const isLogged = useSelector((state) => state.user.connected);
   const user = useSelector((state) => state.user);
+  const cart = useSelector((state) => state.shop.cartList);
   const dispatch = useDispatch();
 
 
@@ -71,15 +76,73 @@ function HomeButtons() {
     setShowWhereIsChairBtn(true);
   };
 
+  const handleClicCart = () => {
+    setCartHoverVisible(prev => !prev);
+  };
+
+console.log("click:", clickCount);
+console.log("cartHoverVisible:", cartHoverVisible);
 
 
   return (
     <div className={homeStyles.body}>
+
       <div className={homeStyles.header}>
-       { isLogged && (
-      <h2 className={homeStyles.Displayusername}>@{user.username}</h2>
-      )}
-        <FontAwesomeIcon icon={faUser} className={homeStyles.btnConnect}onClick={() => handleShowLogin()}></FontAwesomeIcon>
+        { isLogged && (
+          <h2 className={homeStyles.Displayusername}>@{user.username}</h2>
+        )}
+
+        <FontAwesomeIcon 
+          icon={faUser}
+          className={homeStyles.btnConnect}
+          onClick={() => handleShowLogin()}
+        />
+
+        <div 
+          className={homeStyles.btnCartDiv}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          
+          <FontAwesomeIcon 
+            icon={faCartShopping}
+            className={homeStyles.btnCart}
+          />
+
+          <div className={homeStyles.btnCartCount}>        
+              {cart.length}
+          </div>
+
+          { (cartHoverVisible || isHovered ) && (
+          <div className={homeStyles.btnCartHover}>
+          <div className={homeStyles.overflow}>
+            {cart.map((data, i) => (
+              <div key={i}>
+                <div className={homeStyles.cartContainer}>
+                  <div>{data.name} 10</div>
+                  <div>{data.size} 1</div>
+                  <div>{data.price} 1</div>
+                  <div>x</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className={homeStyles.cartFooter}>
+            <div>Payer</div>
+          </div>
+        </div>
+        )}
+
+<div
+          className={homeStyles.cartWrapper}
+          onClick={handleClicCart}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        ></div>
+        </div>
+
+        
+
       </div>
       {areButtonHomesVisible && (
         <div className={homeStyles.bigButtons}>

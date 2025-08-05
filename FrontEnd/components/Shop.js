@@ -21,7 +21,6 @@ const Shop = ({}) => {
       .then((response) => response.json())
       .then((data) => {
         dispatch(setProducts(data.products));
-        console.log(data.products)
       });
 
 

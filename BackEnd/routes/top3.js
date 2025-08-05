@@ -18,7 +18,6 @@ router.patch("/", async (req, res) => {
 
   let doc = await Top3.findOne();
   if (!doc) {
-
     doc = await Top3.create({ scores: [{ username, score }] });
     return res.json({ result: true, top3: doc.scores });
   }
