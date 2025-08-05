@@ -11,7 +11,11 @@ back/node_modules/
 /coverage
 
 # next.js
-/.next/
+.next/
+.next/static
+
+FrontEnd/.next/static/webpack
+BackEnd/.next/
 /out/
 
 # production
