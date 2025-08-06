@@ -227,8 +227,6 @@
 /* whereIsChair */
 
 .divWhereIsChair {
-  /* display: flex;
-  justify-content: center; */
   width: 27%;
   position: absolute;
   top: 63%;
@@ -242,6 +240,10 @@
 
 .whereIsChair {
   width: 50%;
+}
+
+.WhereIsChairButton{
+  z-index: -10;
 }
 
 .btnWhereIsChair {

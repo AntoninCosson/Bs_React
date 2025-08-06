@@ -9,6 +9,16 @@
     z-index: 150;
 }
 
+.modal {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 27%;
+    overflow: hidden;
+}
+
 .fireworkDiv {
     position: absolute;
     top: 11%; left: 9.5%;
@@ -29,15 +39,7 @@
     background: transparent !important;
 }
 
-  .modal {
-    position: relative;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    width: 27%;
-    overflow: hidden;
-}
+
 
 .gameOverSvg{
     width: 60%;

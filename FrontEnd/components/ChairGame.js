@@ -249,7 +249,6 @@ if (!isGameOver) {
 };
 
 
-
 function startGame() {
 
 console.log("Chair landed! Starting game...");
@@ -314,7 +313,6 @@ function gameLoop(now) {
 }
 
 
-
 function checkCollision(player, obstacles) {
 if (!spawnVisible && isGameOver) return;
 
@@ -348,6 +346,7 @@ if (!spawnVisible && isGameOver) return;
       }
     }
 } 
+
 
 function scheduleNextObstacle() {
 
@@ -435,9 +434,6 @@ function restartGame() {
     {displayScore}
     </div>
 </div>
-
-
-
 
 
 <div className={ChairGameStyles.canvasStack}>

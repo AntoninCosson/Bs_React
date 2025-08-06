@@ -13,7 +13,8 @@ import Shop from "./Shop"
 import WhereIsChairButton from "./WhereIsChairButton";
 import ChairSavage from "./ChairSavage";
 import ChairGame from "./ChairGame";
-import Login from "./Login"
+import ModalLogout from "./ModalLogout"
+import ModalSign from "./ModalSign"
 
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -33,7 +34,6 @@ function HomeButtons() {
   const [showLogin, setShowLogin] = useState(false);
   const [isShopClicked, setIsShopClicked] = useState(false);
 
-  const [cartHoverVisible, setCartHoverVisible] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -65,16 +65,12 @@ function HomeButtons() {
 
   const handleShowLogin = () => {
     setShowLogin(true);
-    setAreButtonHomesVisible(false);
-    setShowWhereIsChairBtn(false);
   }
 
-  const handleLogout = () => {
-    dispatch(logout());
-    setShowLogin(false);
-    setAreButtonHomesVisible(true);
-    setShowWhereIsChairBtn(true);
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   setShowLogin(false);
+  // };
 
   const handleDeleteOneCart = (prod, idx) => {
     dispatch(removeFromCart({ index: idx }));
@@ -112,15 +108,18 @@ function HomeButtons() {
 
         </div>  
       </div>
+
   {/* Hover */}
-  <div
+
+    <div
     className={homeStyles.cartWrapper}
     onMouseEnter={() => setIsHovered(true)}
     onMouseLeave={() => setIsHovered(false)}
-  ></div>
+  >
+  </div>
 
                                               {/*  */}
-  <div className={`${homeStyles.btnCartHover} ${isHovered ? homeStyles.show : ""}`}>
+    <div className={`${homeStyles.btnCartHover} ${isHovered ? homeStyles.show : ""}`}>
       <div
       className={homeStyles.cartWrapper2}
       onMouseEnter={() => setIsHovered(true)}
@@ -165,8 +164,33 @@ function HomeButtons() {
         </div>
   </div>
 
-    </div>
-    {/* Fin header */}
+    <div className={loginstyle.logsWraper}>
+        {isLogged && showLogin && !isChairSavageClicked &&(
+          <ModalLogout
+          show={showLogin} 
+          onClose={() => setShowLogin(false)}
+          onHide={() => setShowLogin(false)}
+          
+          />
+        )}
+
+      <div className={homeStyles.SignInUpBody}>
+          {showLogin && !isLogged && !isChairSavageClicked &&(
+              <ModalSign
+              show={showLogin} 
+              onClose={() => setShowLogin(false)}
+              onHide={() => setShowLogin(false)}
+              setSignin={setSignin}
+              setSignup={setSignup}
+              signin={signin}
+              signup={signup}
+              />
+            
+            )}
+        </div>
+  </div>
+</div>
+{/* Fin header */}
 
 
     {/* Big Buttons */}
@@ -220,104 +244,13 @@ function HomeButtons() {
         </div>
       )}
 
-      {showLogin && !isLogged && !isChairSavageClicked &&(
-        
-      <div className={loginstyle.login}>
-        <div className={loginstyle.containerTexts}>
-          { ( !signin && !signup) && (
-          <button
-          className={loginStyles.closeOut}
-          onClick={() => {
-            setShowLogin(false);
-            setSignin(false);
-            setSignup(false);
-            setAreButtonHomesVisible(true);
-            setShowWhereIsChairBtn(true);
-            
-          }}
-        >
-          X
-        </button>
-          )}
-        <p>New here?</p>
-         {signin ? 
-         <Login 
-         close={setSignin} 
-         type={false}
-         onLoginSuccess={() => {
-          setShowLogin(false);
-          setSignin(false);
-          setSignup(false);
-          setAreButtonHomesVisible(true);
-          setShowWhereIsChairBtn(true);
-        }}
-         /> : 
-         <button className={loginstyle.buttonSignUp} 
-         onClick={() => {setSignin(true); setSignup(false)}} 
-         >
-          Sign up
-          </button>}
-            <p>Welcome back beauty!</p>
 
-          {signup ? 
-          <Login 
-          close={setSignup} 
-          type={true} 
-          onLoginSuccess={() => {
-            setShowLogin(false);
-            setSignin(false);
-            setSignup(false);
-            setAreButtonHomesVisible(true);
-            setShowWhereIsChairBtn(true);
-          }}
-          /> : 
-          <button 
-          className={loginstyle.buttonSignin} 
-          onClick={() => {setSignin(false); setSignup(true)}} 
-          >
-            Sign in 
-          </button>}
-
-        </div>
-    </div>
-      )}
-
-      {isLogged && showLogin && !isChairSavageClicked &&(
-      <div className={loginstyle.logoutcontainer}>
-        <div
-        className={loginstyle.logout} 
-        onClick={() => {
-          handleLogout();
-          setShowLogin(false);
-          setAreButtonHomesVisible(true);
-          setShowWhereIsChairBtn(true);
-        }}
-        >
-          Logout
-        </div>
-        <button
-        className={loginStyles.closeLogout}
-        onClick={() => {
-          setShowLogin(false);
-          setSignin(false);
-          setSignup(false);
-          setAreButtonHomesVisible(true);
-          setShowWhereIsChairBtn(true);
-          
-        }}
-      >
-        X
-        </button>
-      </div>
-      )}
 
       {isShopClicked && (
         <Shop
         username={user.username}
         />
-      )
-
-      }
+      )}
 
       {showWhereIsChairBtn && (
         <WhereIsChairButton

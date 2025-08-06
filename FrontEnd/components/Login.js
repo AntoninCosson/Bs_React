@@ -6,7 +6,7 @@ import { connect, logout } from '../reducers/user';
 import { useRouter } from "next/router";
 
 
-const Sign = ({close, type, onLoginSuccess}) => {
+const Sign = ({onClose, type, onLoginSuccess}) => {
     const [name, setName] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
@@ -52,19 +52,21 @@ const Sign = ({close, type, onLoginSuccess}) => {
 
     return (
     <div className={loginStyles.body}>
-        <button className={loginStyles.close} onClick={() => close()}>X</button>
-        <div className={loginStyles.container}>
-            
-            <div className={loginStyles.ThisChairsign}>
-            <img src="/EcrisIcon/chair.svg" alt="" height={40} style={loginStyles.ChairSign}/>
+        <div className={loginStyles.overlay}>
+            <button className={loginStyles.close} onClick={onClose}>X</button>
+            <div className={loginStyles.container}>
+
+                <div className={loginStyles.ThisChairsign}>
+                <img src="/EcrisIcon/chair.svg" alt="" height={40} style={loginStyles.ChairSign}/>
+                </div>
+
+                {type ? null : <input type="text" placeholder='name' value={name} className={loginStyles.input} onChange={(e) => setName(e.target.value) }/>}
+
+                <input type="text" placeholder='userName' value={userName} className={loginStyles.input} onChange={(e) => setUserName(e.target.value) }/>
+                <input type="password" placeholder='password' value={password} className={loginStyles.input} onChange={(e) => setPassword(e.target.value) }/>
+
+                <button className={loginStyles.signin} onClick={() => sign()}>Sign {type ? 'in' : 'up'}</button>
             </div>
-
-            {type ? null : <input type="text" placeholder='name' value={name} className={loginStyles.input} onChange={(e) => setName(e.target.value) }/>}
-
-            <input type="text" placeholder='userName' value={userName} className={loginStyles.input} onChange={(e) => setUserName(e.target.value) }/>
-            <input type="password" placeholder='password' value={password} className={loginStyles.input} onChange={(e) => setPassword(e.target.value) }/>
-
-            <button className={loginStyles.signin} onClick={() => sign()}>Sign {type ? 'in' : 'up'}</button>
         </div>
     </div>
     );
