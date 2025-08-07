@@ -1,91 +1,95 @@
+// ModalSign.js
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useState } from "react-redux";
 import { logout } from "../reducers/user";
 
 import loginstyle from "../styles/Login.module.css";
-import ModalSstyle from '../styles/ModalLogout.module.css'
+import Login from "./Login";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-import Login from "./Login"
-
-function ModalSign({ show, onClose, onHide, setSignin, setSignup, signin, signup }) {
+function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
   const dispatch = useDispatch();
+
+  const hideForm = () => {
+    console.log("Fermeture login")
+    setSignin(false);
+    setSignup(false);
+  };
 
   if (!show) return null;
 
-  const handleLogout = () => {
-    dispatch(logout());
-    onClose();
-  };
-
-
-return (
-<div className={loginstyle.login}>
-    <div className={loginstyle.containerTexts}>
-        { ( !signin && !signup) && (
-            <button
-                className={loginstyle.closeOut}
-                onClick={() => {
-                    onClose();
-                    setSignin(false);
-                    setSignup(false);
-                }}>
-
-                X
-
-            </button>
+  return (
+    <div className={loginstyle.login}>
+      <div className={loginstyle.container}>
+        {(!signin && !signup) && (
+          <FontAwesomeIcon
+            icon={faXmark}
+            className={loginstyle.close}
+            onClick={() => {
+                onClose();
+                hideForm();
+              }}
+          />
+          
         )}
-            <p>New here?</p>
-                {signin ? 
-                    <Login 
-                    close={setSignin} 
-                    type={false}
-                    onLoginSuccess={() => {
-                        setShowLogin(false);
-                        setSignin(false);
-                        setSignup(false);
-                        }}
-                    />
-                : 
-                <div>
-                    <button className={loginstyle.buttonSignUp} 
-                    onClick={() => {
-                    setSignin(true);
-                    setSignup(false)}}>
 
-                        Sign up
-
-                    </button>
-                </div>
-                    }
-
-                <p>
-                    Welcome back beauty!
-                </p>
-            
-                {signup ? 
-                    <Login 
-                        close={setSignup} 
-                        type={true} 
-                        onLoginSuccess={() => {
-                            onClose();
-                            setSignin(false);
-                            setSignup(false);
-                        }}
-                />
-                : 
-                <button 
-                    className={loginstyle.buttonSignin} 
-                    onClick={() => {
-                        setSignin(false);
-                        setSignup(true)}}>
-
-                        Sign in 
-                
-                </button>}
-            
+        {/* Partie “Sign up” */}
+        <div className={loginstyle.txt1}>New here?</div>
+        {signin ? (
+          <Login
+            type={"signup"}
+            onClose={onClose}
+            onHideForm={hideForm}
+            onLoginSuccess={() => {
+                onClose();
+                hideForm();
+            }}
+          />
+        ) : (
+        <div className={loginstyle.divBtn}>
+          <button
+            className={loginstyle.buttonSignUp}
+            onClick={() => {
+              setSignin(true);
+              setSignup(false);
+            }}
+          >
+            Sign up
+          </button>
         </div>
-</div>
-    );
+        )}
+
+        {/* Partie “Sign in” */}
+        <div className={loginstyle.txt2}>Welcome back beauty!</div>
+        {signup ? (
+        <Login
+        onClose={onClose}
+        onHideForm={hideForm}
+        type={"signin"}
+        onLoginSuccess={() => {
+            onClose();
+            hideForm();
+        }}
+      />
+        ) : (
+        <div className={loginstyle.divBtn2}>
+          <button
+            className={loginstyle.buttonSignin}
+            onClick={() => {
+              setSignin(false);
+              setSignup(true);
+            }}
+          >
+            Sign in
+          </button>
+
+      </div>
+        )}
+
+      </div>
+    </div>
+  );
 }
 
-    export default ModalSign;
+export default ModalSign;

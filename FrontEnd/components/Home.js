@@ -67,10 +67,6 @@ function HomeButtons() {
     setShowLogin(true);
   }
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   setShowLogin(false);
-  // };
 
   const handleDeleteOneCart = (prod, idx) => {
     dispatch(removeFromCart({ index: idx }));

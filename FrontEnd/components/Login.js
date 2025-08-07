@@ -1,17 +1,25 @@
 import React from 'react';
-import { useState } from 'react';
+
 import loginStyles from '../styles/Login.module.css'
+
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'; 
 import { connect, logout } from '../reducers/user'; 
 import { useRouter } from "next/router";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const Sign = ({onClose, type, onLoginSuccess}) => {
+
+const Sign = ({
+    type,
+    onLoginSuccess,
+    onHideForm,
+  }) => {
     const [name, setName] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const router = useRouter();
-
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user); 
@@ -23,9 +31,7 @@ const Sign = ({onClose, type, onLoginSuccess}) => {
     
         const resp = await fetch(`http://localhost:3000/users/${type ? 'signin' : 'signup'}`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(bodyObj),
         });
     
@@ -38,7 +44,8 @@ const Sign = ({onClose, type, onLoginSuccess}) => {
             bestScore: data.bestScore,
             connected: true 
         }));
-        close(false);
+        onHideForm();
+
         router.push('/');
         if (onLoginSuccess) onLoginSuccess();
         console.log(data.bestScore);
@@ -51,13 +58,19 @@ const Sign = ({onClose, type, onLoginSuccess}) => {
     
 
     return (
-    <div className={loginStyles.body}>
+    <div className={loginStyles.body}> 
         <div className={loginStyles.overlay}>
-            <button className={loginStyles.close} onClick={onClose}>X</button>
-            <div className={loginStyles.container}>
+            <FontAwesomeIcon
+                    icon={faXmark}
+                    className={loginStyles.close} 
+                    onClick={()=>{
+                        onHideForm();
+                    }}
+                />
+            <div className={loginStyles.container2}>
 
                 <div className={loginStyles.ThisChairsign}>
-                <img src="/EcrisIcon/chair.svg" alt="" height={40} style={loginStyles.ChairSign}/>
+                <img src="/EcrisIcon/chair.svg" alt="" height={60} style={loginStyles.ChairSign}/>
                 </div>
 
                 {type ? null : <input type="text" placeholder='name' value={name} className={loginStyles.input} onChange={(e) => setName(e.target.value) }/>}
@@ -71,5 +84,7 @@ const Sign = ({onClose, type, onLoginSuccess}) => {
     </div>
     );
 };
+
+
 
 export default Sign;
