@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { connect } from "../reducers/user";
+import { connect } from "../reducers/user"; // ton reducer
 
 
 import styles from "../styles/GameOverModal.module.css";
-
 
 
 export default function GameOverModal({ score, onRestart }) {
@@ -17,7 +16,11 @@ const bestScore = useSelector(state => state.user.bestScore);
 const [bestScoreUser, setBestScoreUser] = useState(0);
 const [showFirework, setShowFirework] = useState(false);
 
-const [top3Scores, setTop3Scores] = useState([]);
+const [top3Scores, setTop3Scores] = useState([
+  // { username: data.top3Scores.username[0], score: data.top3Scores.score[0] },
+  // { username: data.top3Scores.username[1], score: data.top3Scores.score[1] },
+  // { username: data.top3Scores.username[2], score: data.top3Scores.score[2] }
+]);
 
 function playFireworkAnimation() {
   setShowFirework(true);
@@ -95,17 +98,14 @@ function playFireworkAnimation() {
 
   return (
 <div className={styles.overlay}>
-
   <div className={styles.modal}>
 
   {showFirework && (
-  <div className={styles.fireworkDiv}>
-      <img 
-        src="/Anim/clicportfolio.gif"
-        className={styles.firework}
-        alt="Firework animation"
-      />
-  </div>
+  <img 
+    src="/Anim/clicportfolio.gif"
+    className={styles.firework}
+    alt="Firework animation"
+  />
 )}
 
     <img

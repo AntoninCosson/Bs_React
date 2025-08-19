@@ -36,7 +36,7 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
 
         {/* Partie “Sign up” */}
         <div className={loginstyle.txt1}>New here?</div>
-        {signin ? (
+        {signup ? (
           <Login
             type={"signup"}
             onClose={onClose}
@@ -51,18 +51,18 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
           <button
             className={loginstyle.buttonSignUp}
             onClick={() => {
-              setSignin(true);
-              setSignup(false);
+              setSignin(false);
+              setSignup(true);
             }}
           >
-            Sign up
+            Sign uup
           </button>
         </div>
         )}
 
         {/* Partie “Sign in” */}
         <div className={loginstyle.txt2}>Welcome back beauty!</div>
-        {signup ? (
+        {signin ? (
         <Login
         onClose={onClose}
         onHideForm={hideForm}
@@ -77,8 +77,8 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
           <button
             className={loginstyle.buttonSignin}
             onClick={() => {
-              setSignin(false);
-              setSignup(true);
+              setSignin(true);
+              setSignup(false);
             }}
           >
             Sign in
