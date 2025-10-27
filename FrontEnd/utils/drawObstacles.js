@@ -7,7 +7,7 @@ export function drawObstacles(ctx, canvas, obstaclesRef, obstacleImg, gameSpeedR
     //
     for (let i = obstaclesRef.current.length - 1; i >= 0; i--) {
       const obs = obstaclesRef.current[i];
-      obs.x -= -2 + gameSpeedRef.current / 0.8; // vitesse obst
+      obs.x -= -2 + gameSpeedRef.current / 0.7; // vitesse obst
   
       //
       if (obs.x + obs.width < 0) {

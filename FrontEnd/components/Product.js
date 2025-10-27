@@ -116,4 +116,3 @@ return (
 
 export default Product;
 
-

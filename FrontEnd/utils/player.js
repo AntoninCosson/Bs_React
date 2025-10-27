@@ -21,8 +21,8 @@ export class Player {
 
     update(gravity, deltaTime = 1, score) {
 
-      let speedFactor = 10 + score * 10 // speed frames
-      this.runFrameInterval = Math.max(1, 10000 / speedFactor); // min max vitesse
+    let speedFactor = 12 + score * 10 // speed frames
+    this.runFrameInterval = Math.max(5, 10000 / speedFactor); // min max vitesse
 
     this.frameTimer += deltaTime;
 

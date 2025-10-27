@@ -10,7 +10,8 @@ require("./models/connection");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-const top3Router = require('./routes/top3');
+var top3Router = require('./routes/top3');
+var shopRouter = require('./routes/shop');
 
 
 var app = express();
@@ -25,5 +26,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use('/top3', top3Router);
+app.use('/shop', shopRouter);
 
 module.exports = app;

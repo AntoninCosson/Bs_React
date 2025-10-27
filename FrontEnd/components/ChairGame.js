@@ -65,6 +65,7 @@ function ChairGame({}) {
   const animationFrameIdRef = useRef(null);
 
   const spawnIntervalRef = useRef(null);
+  const [spawnVisible, setSpawnVisible] = useState(true);
 
   const gameSpeed = useRef(5);
   const score = useRef(0);
@@ -248,7 +249,6 @@ if (!isGameOver) {
 };
 
 
-
 function startGame() {
 
 console.log("Chair landed! Starting game...");
@@ -299,7 +299,6 @@ function gameLoop(now) {
       checkCollision(player.current, obstaclesRef.current);
   }
 
-    // Dessiner chaise
     const chair = fallingChair.current;
     chairCtxRef.current.drawImage(chair.image, chair.x, chair.y, chair.width, chair.height);
 
@@ -314,8 +313,8 @@ function gameLoop(now) {
 }
 
 
-
 function checkCollision(player, obstacles) {
+if (!spawnVisible && isGameOver) return;
 
   const playerHitbox = {
     x: player.x + player.width * 0.57, // absysse hitbox
@@ -338,14 +337,16 @@ function checkCollision(player, obstacles) {
             playerHitbox.y + playerHitbox.height > obstacleHitbox.y
           ){
         setIsGameOver(true);
+        gameSpeed.current = 0
+        setSpawnVisible(false)
         setFinalScore(score.current);
-        score.current = finalScore;
         clearInterval(spawnIntervalRef.current);
         console.log("Game Over");
         break;
       }
     }
 } 
+
 
 function scheduleNextObstacle() {
 
@@ -364,11 +365,11 @@ if (score.current > 100) {
 } else if (score.current > 43) {
   minDelay = 400;
 } else if (score.current > 36) {
-  minDelay = 1200;
+  minDelay = 400;
 } else if (score.current > 27) {
   minDelay = 350;
 } else if (score.current > 25) {
-  minDelay = 1000;
+  minDelay = 700;
 } else if (score.current > 15) {
   minDelay = 400;
 } else if (score.current > 10) {
@@ -379,9 +380,9 @@ if (score.current > 100) {
   minDelay = 1000;
 }
 
-let randomness = Math.random() * 3500 - Math.random() * minDelay;
+let randomness = Math.random() * 2500 - Math.random() * minDelay;
 let variableDelay = minDelay + randomness;
-variableDelay = Math.max(400, Math.min(3500, variableDelay));
+variableDelay = Math.max(400, Math.min(3000, variableDelay));
 
   let nextSpawn = Math.max(minDelay, variableDelay);
 
@@ -394,6 +395,7 @@ variableDelay = Math.max(400, Math.min(3500, variableDelay));
 
 function restartGame() {
   setIsGameOver(false);
+  setSpawnVisible(true);
   score.current = 0;
   gameSpeed.current = 5;
   backgroundX.current = 0;
@@ -434,17 +436,14 @@ function restartGame() {
 </div>
 
 
-
-
-
 <div className={ChairGameStyles.canvasStack}>
     <div className={ChairGameStyles.canvasBackground}> 
     <canvas ref={backgroundCanvasRef} className={ChairGameStyles.BackgroundArea}/>
     </div>
  
     <div className={ChairGameStyles.obstaclesArea}>
-    <canvas ref={obstaclesCanvasRef} className={ChairGameStyles.obstaclesCanvas} />
-</div>
+        <canvas ref={obstaclesCanvasRef} className={ChairGameStyles.obstaclesCanvas} />
+    </div>
 
 <div className={ChairGameStyles.playerArea}>
   <canvas ref={playerCanvasRef} className={ChairGameStyles.playerCanvas} />
@@ -459,7 +458,7 @@ function restartGame() {
 {isGameOver && (
   <GameOverModal 
     className={ChairGameStyles.GameOverModal}
-    score = {isGameOver ? finalScore : displayScore}
+    score = {finalScore}
     onRestart={restartGame} 
   />
 )}
