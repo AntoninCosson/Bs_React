@@ -116,7 +116,7 @@ export default function Chatbox() {
   }
 
   async function onSend(e) {
-    
+
     e?.preventDefault?.();
     if (isSending || quotaExceeded) return;
 
@@ -338,7 +338,7 @@ export default function Chatbox() {
 
       <div style={styles.hint}>
         {input.length}/{MAX_CHARS} caractères • Essayez : “Montre les créneaux”,
-        “Réserve 2025-11-11 11:00”. “Confirme à email@domaine.com”.
+        “Réserve 2025-11-11 11:00”. “Confirme à email@domain.com”.
       </div>
     </div>
   );
