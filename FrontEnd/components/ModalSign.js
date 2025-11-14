@@ -1,6 +1,6 @@
 // ModalSign.js
-import React from "react";
-import { useDispatch, useState } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { logout } from "../reducers/user";
 
 import loginstyle from "../styles/Login.module.css";
@@ -12,7 +12,7 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
   const dispatch = useDispatch();
 
   const hideForm = () => {
-    console.log("Fermeture login")
+    console.log("Fermeture login");
     setSignin(false);
     setSignup(false);
   };
@@ -22,71 +22,68 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
   return (
     <div className={loginstyle.login}>
       <div className={loginstyle.container}>
-        {(!signin && !signup) && (
+        {!signin && !signup && (
           <FontAwesomeIcon
             icon={faXmark}
             className={loginstyle.close}
             onClick={() => {
-                onClose();
-                hideForm();
-              }}
+              onClose();
+              hideForm();
+            }}
           />
-          
         )}
 
-        {/* Partie “Sign up” */}
+        {/* Sign up */}
         <div className={loginstyle.txt1}>New here?</div>
-        {signin ? (
+        {signup ? (
           <Login
-            type={"signup"}
+            mode="signup"
             onClose={onClose}
             onHideForm={hideForm}
             onLoginSuccess={() => {
-                onClose();
-                hideForm();
+              onClose();
+              hideForm();
             }}
           />
         ) : (
-        <div className={loginstyle.divBtn}>
-          <button
-            className={loginstyle.buttonSignUp}
-            onClick={() => {
-              setSignin(true);
-              setSignup(false);
-            }}
-          >
-            Sign up
-          </button>
-        </div>
+          <div className={loginstyle.divBtn}>
+            <button
+              className={loginstyle.buttonSignUp}
+              onClick={() => {
+                setSignup(true);
+                setSignin(false);
+              }}
+            >
+              Sign up
+            </button>
+          </div>
         )}
 
-        {/* Partie “Sign in” */}
+        {/* Sign in */}
         <div className={loginstyle.txt2}>Welcome back beauty!</div>
-        {signup ? (
-        <Login
-        onClose={onClose}
-        onHideForm={hideForm}
-        type={"signin"}
-        onLoginSuccess={() => {
-            onClose();
-            hideForm();
-        }}
-      />
-        ) : (
-        <div className={loginstyle.divBtn2}>
-          <button
-            className={loginstyle.buttonSignin}
-            onClick={() => {
-              setSignin(false);
-              setSignup(true);
+        {signin ? (
+          <Login
+            onClose={onClose}
+            onHideForm={hideForm}
+            mode="login"
+            onLoginSuccess={() => {
+              onClose();
+              hideForm();
             }}
-          >
-            Sign in
-          </button>
-
-      </div>
+          />
+        ) : (
+          <div className={loginstyle.divBtn2}>
+            <button
+              className={loginstyle.buttonSignin}
+              onClick={() => {
+                setSignin(true);
+                setSignup(false);
+              }}
+            >
+              Sign in
+            </button>
+          </div>
         )}
-
       </div>
     </div>
   );

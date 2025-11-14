@@ -21,7 +21,6 @@ const store = configureStore({
 });
 const persistor = persistStore(store);
 
-// englober le composant avec :
 
 function App({ Component, pageProps }) {
   return (

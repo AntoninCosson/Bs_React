@@ -23,6 +23,9 @@
     overflow: hidden;
 }
 
+.overlaySignup {
+    height: 48%;
+  }
 
 .SignInUpBody{
     z-index: 10;
@@ -114,9 +117,7 @@
 .ThisChairsign{
     margin-bottom: 23%;
 }
-.ChairSigb{
-    
-}
+
 .input{
     width: 150%;
     margin: 9%;

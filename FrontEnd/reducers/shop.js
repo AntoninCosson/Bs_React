@@ -1,34 +1,50 @@
-import { createSlice } from '@reduxjs/toolkit';
+// reducers/shop.js
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   products: [],
-  cartList: [],
+  cartList: [],      // source unique pour l’UI (guest OU serveur)
   cartTimeLeft: 0,
 };
 
-export const shopSlice = createSlice({
-  name: 'shop',
+const shopSlice = createSlice({
+  name: "shop",
   initialState,
   reducers: {
-    setProducts: (state, action) => {
-      state.products = action.payload;
+    setProducts: (s, a) => {
+      s.products = Array.isArray(a.payload) ? a.payload : [];
     },
-    setCartList: (state, action) => {
-      state.cartList.push(action.payload);
+
+    addOneToGuestCart: (s, a) => {
+      s.cartList.push(a.payload);
     },
-    removeFromCart: (state, action) => {
-      const { index } = action.payload;
-      state.cartList = state.cartList.filter((_, i) => i !== index);
+
+    setCartFromServer: (s, a) => {
+      s.cartList = Array.isArray(a.payload) ? a.payload : [];
     },
-    clearCart: (state) => {
-      state.cartList = [];
+
+    setCartFromGuest: (s, a) => {
+      s.cartList = Array.isArray(a.payload) ? a.payload : [];
     },
-    cartTimeLeft: (state, action) => {
-      state.products = action.payload;
+    removeFromCartByIndex: (s, a) => {
+      s.cartList = s.cartList.filter((_, i) => i !== a.payload.index);
     },
+
+    clearCart: (s) => { s.cartList = []; },
+    setCartTimeLeft: (s, a) => { s.cartTimeLeft = a.payload ?? 0; },
     resetShop: () => initialState,
   },
 });
 
-export const { setProducts, setCartList, clearCart, cartTimeLeft, resetShop, removeFromCart } = shopSlice.actions
-export default shopSlice.reducer
+export const {
+  setProducts,
+  addOneToGuestCart,
+  setCartFromServer,
+  setCartFromGuest,
+  removeFromCartByIndex,
+  clearCart,
+  setCartTimeLeft,
+  resetShop,
+} = shopSlice.actions;
+
+export default shopSlice.reducer;

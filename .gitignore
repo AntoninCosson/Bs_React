@@ -19,7 +19,13 @@ dist/
 .env.*
 !.env.example
 
-# === OS / Editors ===
+# === Ignore safety check script ===
+check-safety.sh
+
+# === Ignore all bash scripts ===
+*.sh
+
+# === / Editors ===
 .DS_Store
 **/.DS_Store
 .vscode/
