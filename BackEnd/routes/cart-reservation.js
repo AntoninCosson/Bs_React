@@ -8,7 +8,9 @@ router.post("/add-reservation", async (req, res) => {
     const { reservationId, date, time } = req.body;
 
     if (!reservationId || !date || !time) {
-      return res.status(400).json({ success: false, message: "Missing fields" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing fields" });
     }
 
     const pseudoProduct = {

@@ -1,4 +1,6 @@
-// models/orders.js
+// modules/shop/models/Order.js
+const mongoose = require('mongoose');
+
 const OrderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
   stripe: {
@@ -83,4 +85,5 @@ const OrderSchema = new mongoose.Schema({
     trackingCode: String,
   },
 }, { timestamps: true });
+
 module.exports = mongoose.model('orders', OrderSchema);

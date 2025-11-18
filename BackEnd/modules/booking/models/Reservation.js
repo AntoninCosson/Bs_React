@@ -1,5 +1,6 @@
-// models/Reservation.js  (CommonJS)
+// modules/booking/models/Reservation.js (CommonJS)
 const mongoose = require("mongoose");
+
 const reservationSchema = new mongoose.Schema(
   {
     userId: {
@@ -40,7 +41,6 @@ const reservationSchema = new mongoose.Schema(
 );
 
 reservationSchema.index({ date: 1, time: 1 }, { unique: true });
-
 reservationSchema.index({ userId: 1, date: 1 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);

@@ -1,5 +1,5 @@
 // BackEnd/mcp/agent/llm.usage.js
-const User = require("../../models/users");
+const User = require("../../modules/users/models/User");
 
 // o3-mini réel
 const INPUT_COST_PER_1K = Number(process.env.O3M_INPUT_USD_PER_1K || "0.0011");

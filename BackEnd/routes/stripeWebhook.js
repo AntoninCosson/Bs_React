@@ -4,24 +4,20 @@ const router = express.Router();
 const bodyParser = require("body-parser");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { sendMail } = require("../utils/mailer");
-const User = require("../models/users");
+const User = require("../modules/users/models/User");
 
 const { getOkapiRate } = require("../utils/okapi");
 
 const {
   sendBookingConfirmationByReservationId,
-} = require("../mcp/service/mail.service");
-const Reservation = require("../models/Reservation");
+} = require("../modules/notifications/mail.service");
+const Reservation = require("../modules/booking/models/Reservation");
 
 router.post(
   "/webhook",
   bodyParser.raw({ type: "application/json" }),
   async (req, res) => {
     const sig = req.headers["stripe-signature"];
-    // console.log(
-    //   "[WH] hit /payments/webhook, sig:",
-    //   sig ? "present" : "missing"
-    // );
 
     let event;
     try {
@@ -52,7 +48,6 @@ router.post(
         const reservationId = session.metadata?.reservationId;
 
         if (isReservation && reservationId) {
-          // console.log("payment completed for", reservationId);
 
           try {
             await Reservation.findByIdAndUpdate(reservationId, {
@@ -61,18 +56,11 @@ router.post(
               lastEmailAt: new Date(),
             });
 
-
             const mailResult = await sendBookingConfirmationByReservationId(
               reservationId
             );
-            // console.log(
-            //   "confirmation email result:",
-            //   mailResult
-            // );
           } catch (e) {
-            // console.error("Reservation error:", e.message);
           }
-
 
           return res.json({ received: true, type: "reservation" });
         }
@@ -170,9 +158,7 @@ router.post(
               2
             )} ${currency}.`,
           });
-          // console.log("[WH] buyer email sent →", buyer, info?.messageId || "");
         } catch (e) {
-          // console.error("[WH] buyer email error:", e.message);
         }
 
         if (
@@ -248,51 +234,6 @@ router.post(
           console.error("[SIMTAO] grouping error:", e.message);
         }
 
-        //   // ===== Okapi: calcul tarif (INSIDE handler) =====
-        //   try {
-        //     const dest = {
-        //       postcode: session?.customer_details?.address?.postal_code,
-        //       country: session?.customer_details?.address?.country || "FR",
-        //     };
-
-        //     if (!dest.postcode) {
-        //       console.log('[OKAPI] skipped: missing postcode');
-        //     } else {
-        //     const itemsForOkapi = (session.line_items?.data || []).map((li) => ({
-        //       weight: Number(li.price?.metadata?.weight || 0.05), // 50g default
-        //       dimensions: {
-        //         length: Number(li.price?.metadata?.length || 20),
-        //         width: Number(li.price?.metadata?.width || 15),
-        //         height: Number(li.price?.metadata?.height || 3),
-        //       },
-        //       quantity: li.quantity || 1,
-        //     }));
-
-        //     const okapiKey =
-        //       process.env.OKAPI_KEY_SANDBOX || process.env.OKAPI_KEY_PROD;
-        //     if (!okapiKey) {
-        //       console.log("[OKAPI] skipped: no API key in env");
-        //     } else {
-        //       const rate = await getOkapiRate({
-        //         dest,
-        //         items: itemsForOkapi,
-        //         deliveryType: "domicile",
-        //       });
-
-        //       console.log("[OKAPI] rate:", {
-        //         service: rate.service,
-        //         price: rate.price,
-        //         currency: rate.currency,
-        //         parcel: rate.parcel,
-        //         to: dest,
-        //       });
-
-        //       // TODO: stocker en DB et/ou inclure dans l’email
-        //     }}
-        //   } catch (e) {
-        //     console.error("[OKAPI] rate error:", e.message);
-        //   }
-        //   // ===== fin Okapi =====
       }
 
       return res.json({ received: true });

@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/users");
+const User = require("../modules/users/models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth");
+const { signinLimiter, signupLimiter } = require("../middlewares/authRateLimit");
+const { validateBody } = require("../middlewares/validateZod");
+const { signupSchema, loginSchema, refreshTokenSchema, updateBestScoreSchema } = require("../modules/users/schemas/userSchemas");
 
 // ---- JWT
 function signAccess(user) {
@@ -25,12 +28,12 @@ function signRefresh(user) {
 }
 
 // ---- SIGNUP
-router.post("/signup", async (req, res) => {
+router.post("/signup", signupLimiter, validateBody(signupSchema), async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
       return res.json({
-        result: false,
+        success: false,
         error: "Missing fields (username, email, password)",
       });
     }
@@ -39,7 +42,7 @@ router.post("/signup", async (req, res) => {
     if (exists) {
       const field =
         exists.email === (email || "").toLowerCase() ? "email" : "username";
-      return res.json({ result: false, error: `Already used ${field}` });
+      return res.json({ success: false, error: `Already used ${field}` });
     }
 
     const hash = bcrypt.hashSync(password, 10);
@@ -59,7 +62,7 @@ router.post("/signup", async (req, res) => {
     await user.save();
 
     return res.json({
-      result: true,
+      success: true,
       user: {
         username: user.username,
         email: user.email,
@@ -71,12 +74,12 @@ router.post("/signup", async (req, res) => {
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ result: false, error: "Server error" });
+    res.status(500).json({ success: false, error: "Server error" });
   }
 });
 
 // ---- LOGIN
-router.post("/login", async (req, res) => {
+router.post("/login", signinLimiter, validateBody(loginSchema), async (req, res) => {
   try {
     const { username, email, password, identifier } = req.body;
     const query = identifier
@@ -92,7 +95,7 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne(query);
     if (!user || !bcrypt.compareSync(password, user.password)) {
-      return res.json({ result: false, error: "Invalid credentials" });
+      return res.json({ success: false, error: "Invalid credentials" });
     }
 
     const refresh = signRefresh(user);
@@ -100,7 +103,7 @@ router.post("/login", async (req, res) => {
     await user.save();
 
     return res.json({
-      result: true,
+      success: true,
       user: {
         username: user.username,
         email: user.email,
@@ -112,43 +115,43 @@ router.post("/login", async (req, res) => {
     });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ result: false, error: "Server error" });
+    res.status(500).json({ success: false, error: "Server error" });
   }
 });
 
 // ---- REFRESH
-router.post("/refresh", async (req, res) => {
+router.post("/refresh", validateBody(refreshTokenSchema), async (req, res) => {
   const { refreshToken } = req.body || {};
   if (!refreshToken)
     return res
       .status(400)
-      .json({ result: false, error: "No refresh token provided" });
+      .json({ success: false, error: "No refresh token provided" });
 
   try {
     const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = await User.findById(payload.id);
     if (!user || !user.refreshTokenHash)
-      return res.status(401).json({ result: false, error: "User not found" });
+      return res.status(401).json({ success: false, error: "User not found" });
 
     const ok = await bcrypt.compare(refreshToken, user.refreshTokenHash);
     if (!ok)
       return res
         .status(401)
-        .json({ result: false, error: "Invalid refresh token" });
+        .json({ success: false, error: "Invalid refresh token" });
 
     const newRefresh = signRefresh(user);
     user.refreshTokenHash = bcrypt.hashSync(newRefresh, 10);
     await user.save();
 
     return res.json({
-      result: true,
+      success: true,
       accessToken: signAccess(user),
       refreshToken: newRefresh,
     });
   } catch (err) {
     return res
       .status(401)
-      .json({ result: false, error: "Invalid refresh token" });
+      .json({ success: false, error: "Invalid refresh token" });
   }
 });
 
@@ -156,9 +159,9 @@ router.post("/refresh", async (req, res) => {
 router.get("/me", auth, async (req, res) => {
   const user = await User.findById(req.user.id).lean();
   if (!user)
-    return res.status(404).json({ result: false, error: "User not found" });
+    return res.status(404).json({ success: false, error: "User not found" });
   res.json({
-    result: true,
+    success: true,
     user: {
       username: user.username,
       email: user.email,
@@ -184,29 +187,29 @@ router.post("/logout", auth, async (req, res) => {
   await User.findByIdAndUpdate(req.user.id, {
     $set: { refreshTokenHash: null },
   });
-  res.json({ result: true });
+  res.json({ success: true });
 });
 
 // ---- BestScore
 router.get("/bestScoreUser", async (req, res) => {
   const { username } = req.query;
-  if (!username) return res.json({ result: false, error: "Missing username" });
+  if (!username) return res.json({ success: false, error: "Missing username" });
   const user = await User.findOne({ username });
-  if (user) res.json({ result: true, bestScoreUser: user.bestScore ?? 0 });
-  else res.json({ result: false, bestScoreUser: 0 });
+  if (user) res.json({ success: true, bestScoreUser: user.bestScore ?? 0 });
+  else res.json({ success: false, bestScoreUser: 0 });
 });
 
-router.patch("/bestScoreUser", async (req, res) => {
+router.patch("/bestScoreUser", validateBody(updateBestScoreSchema), async (req, res) => {
   const { username, score } = req.body;
   if (!username || typeof score !== "number")
-    return res.json({ result: false, error: "Missing data" });
+    return res.json({ success: false, error: "Missing data" });
   const user = await User.findOne({ username });
-  if (!user) return res.json({ result: false, error: "User not found" });
+  if (!user) return res.json({ success: false, error: "User not found" });
   if (score > (user.bestScore ?? 0)) {
     user.bestScore = score;
     await user.save();
   }
-  res.json({ result: true, bestScoreUser: user.bestScore ?? 0 });
+  res.json({ success: true, bestScoreUser: user.bestScore ?? 0 });
 });
 
 //

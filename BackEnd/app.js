@@ -1,4 +1,12 @@
 require("dotenv").config();
+
+// Security check: JWT_SECRET must be configured
+if (!process.env.JWT_SECRET) {
+  console.error('❌ FATAL: JWT_SECRET is not defined in .env');
+  console.error('❌ The server will NOT start without JWT_SECRET for security reasons.');
+  process.exit(1);
+}
+
 const { verifyMailer } = require('./utils/mailer');
 // verifyMailer();
 const express = require("express");
@@ -65,6 +73,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
+
 app.use("/users", usersRouter);
 app.use("/top3", top3Router);
 app.use("/shop", shopRouter);
@@ -75,6 +84,36 @@ app.use('/cart', cartRouter)
 app.use("/", paymentConfirmedRouter);
 app.use('/mcp', mcpRouter); 
 
+// Errors
+
+// 404 Route not found
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    error: 'Route not found',
+    path: req.path,
+  });
+});
+
+// Global error
+app.use((err, req, res, next) => {
+  console.error('Error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    path: req.path,
+    method: req.method,
+  });
+
+  const statusCode = err.statusCode || err.status || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : err.message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+  });
+});
 
 module.exports = app;
 

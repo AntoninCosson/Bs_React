@@ -2,9 +2,6 @@
 const express = require("express");
 const router = express.Router();
 
-// Route appelée par le front (ReservationSuccess)
-// après le retour Stripe. Pour l'instant, on ne
-// fait que renvoyer success pour débloquer le flux.
 router.post("/payment-confirmed", async (req, res) => {
   try {
     const { reservationId } = req.body;
@@ -15,15 +12,12 @@ router.post("/payment-confirmed", async (req, res) => {
         .json({ success: false, error: "Missing reservationId" });
     }
 
-    console.log("[payment-confirmed] OK for reservation", reservationId);
-
+    console.log("✅ [Payment Confirmed] Reservation:", reservationId);
 
     return res.json({ success: true });
   } catch (e) {
     console.error("[payment-confirmed] error:", e);
-    return res
-      .status(500)
-      .json({ success: false, error: "internal_error" });
+    return res.status(500).json({ success: false, error: "internal_error" });
   }
 });
 

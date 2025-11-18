@@ -1,5 +1,5 @@
 // BackEnd/mcp/middlewares/llmQuota.js
-const User = require("../../models/users");
+const User = require("../../modules/users/models/User");
 
 const MAX_COST_CENTS_PER_MONTH = Number(
   process.env.LLM_MAX_COST_CENTS_PER_MONTH || "10"

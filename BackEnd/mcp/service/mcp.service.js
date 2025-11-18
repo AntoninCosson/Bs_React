@@ -1,8 +1,8 @@
 // BackEnd/mcp/service/mcp.service.js (CommonJS)
-const { getAvailableSlotsDB, reserveSlotDB } = require('../service/slot.service');
+const { getAvailableSlotsDB, reserveSlotDB } = require('../../modules/booking/slot.service');
 const { sendConfirmationEmailTool } = require('../tools/sendConfirmationEmail.tool');
-const { sendBookingConfirmationByReservationId } = require('./mail.service');
-const { createStripeCheckoutForReservation } = require("./payment.service");
+const { sendBookingConfirmationByReservationId } = require('../../modules/notifications/mail.service');
+const { createStripeCheckoutForReservation } = require("../../modules/payments/payment.service");
 
 async function validateUser({ username, password }) {
   if (!username || !password) {

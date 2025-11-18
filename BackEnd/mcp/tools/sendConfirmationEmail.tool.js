@@ -1,5 +1,5 @@
 // BackEnd/mcp/tools/sendConfirmationEmail.tool.js
-const { sendBookingConfirmation } = require("../service/mail.service");
+const { sendBookingConfirmationByReservationId } = require("../../modules/notifications/mail.service");
 
 async function sendConfirmationEmailTool(params, context) {
   console.log("[TOOL] sendConfirmationEmail called with:", params);
@@ -13,7 +13,7 @@ async function sendConfirmationEmailTool(params, context) {
     };
   }
 
-  const result = await sendBookingConfirmation({ reservationId });
+  const result = await sendBookingConfirmationByReservationId(reservationId);
 
   console.log("[sendConfirmationEmail.tool] result from mail.service", result);
   return result;

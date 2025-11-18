@@ -1,6 +1,6 @@
-// BackEnd/mcp/service/payment.service.js
+// BackEnd/modules/payments/payment.service.js
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const Reservation = require("../../models/Reservation");
+const Reservation = require("../booking/models/Reservation");
 
 function getBookingAmountCents(reservation) {
   if (

@@ -1,8 +1,8 @@
-// BackEnd/mcp/services/slot.service.js (CommonJS)
+// BackEnd/modules/booking/slot.service.js (CommonJS)
 const mongoose = require("mongoose");
-const Slot = require("../../models/Slot");
-const Reservation = require("../../models/Reservation");
-const User = require("../../models/users");
+const Slot = require("./models/Slot");
+const Reservation = require("./models/Reservation");
+const User = require("../users/models/User");
 
 async function getAvailableSlotsDB(date) {
   const day = await Slot.findOne({ date }).lean();
@@ -50,9 +50,6 @@ async function reserveSlotDB({ userId, date, time, service }) {
     depositAmount: 0,
     depositCurrency: "EUR",
   });
-
-//   console.log("doc", doc);
-//   console.log("userObjectId", userObjectId);
 
   await User.findByIdAndUpdate(
     userObjectId,
