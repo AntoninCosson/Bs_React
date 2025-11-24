@@ -1,5 +1,5 @@
 // BackEnd/mcp/service/mcp.service.js (CommonJS)
-const { getAvailableSlotsDB, reserveSlotDB } = require('../../modules/booking/slot.service');
+const { getAvailableSlotsDB, getAvailableSlotsWithAlternativesDB, reserveSlotDB } = require('../../modules/booking/slot.service');
 const { sendConfirmationEmailTool } = require('../tools/sendConfirmationEmail.tool');
 const { sendBookingConfirmationByReservationId } = require('../../modules/notifications/mail.service');
 const { createStripeCheckoutForReservation } = require("../../modules/payments/payment.service");
@@ -13,8 +13,7 @@ async function validateUser({ username, password }) {
 
 async function getAvailableSlots({ date }) {
   if (!date) return { success:false, message:'Missing date' };
-  const slots = await getAvailableSlotsDB(date);
-  return { success:true, availableSlots: slots };
+  return await getAvailableSlotsWithAlternativesDB(date);
 }
 
 async function reserveSlot({ userId, date, time, service }) {

@@ -32,7 +32,13 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
     const data = await res.json();
     setLoading(false);
 
-    if (data.result) {
+    console.log("[Login Debug]", {
+      status: res.status,
+      data: data,
+      hasResult: !!data.success
+    });
+
+    if (data.success) {
       dispatch(
         connect({
           username: data.user.username,
@@ -54,7 +60,7 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
             body: JSON.stringify({ items: guestCart }),
           });
           const previewData = await res.json();
-          if (previewData.result) {
+          if (previewData.success) {
             const applyRes = await fetch(`${API_URL}/shop/cart/apply`, {
               method: "POST",
               headers: {
@@ -64,7 +70,7 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
               body: JSON.stringify({ items: guestCart }),
             });
             const applyData = await applyRes.json();
-            if (applyData.result) {
+            if (applyData.success) {
               localStorage.removeItem("guestCart");
               console.log("Cart merged:", applyData.cart);
             }
@@ -78,7 +84,7 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
       router.push("/");
       onLoginSuccess?.();
     } else {
-      alert(data.error || "Auth error");
+      console.log((`Error: ${JSON.stringify(data)}`));
     }
   }
 

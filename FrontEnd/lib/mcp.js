@@ -65,10 +65,11 @@ export async function mcpCall(tool, params = {}, opts = {}) {
 }
 
 export async function mcpAgent(messages = [], opts = {}) {
-  const r = await fetch(`${BASE}/mcp/agent`, {
+  const userMsg = messages[messages.length - 1]?.content || "";
+  const r = await fetch(`http://localhost:8000/agent`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders(opts) },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ message: userMsg }),
   });
 
   const data = await r.json().catch(() => ({}));
@@ -77,5 +78,8 @@ export async function mcpAgent(messages = [], opts = {}) {
     throw new Error(message);
   }
 
-  return data.message;
+  return {
+    role: "assistant",
+    content: data.message,
+  };
 }

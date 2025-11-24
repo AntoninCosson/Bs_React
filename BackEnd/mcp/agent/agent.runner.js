@@ -60,6 +60,96 @@ const MCP_TOOLS = [
   },
 ];
 
+// ✅ NOUVELLES FONCTIONS POUR LES BOUTONS
+
+function shouldReturnButtons(toolResult, toolName) {
+  // Si le tool retourne explicitement des actions
+  if (toolResult.actions && Array.isArray(toolResult.actions)) {
+    return true;
+  }
+  
+  // Si c'est getAvailableSlots avec des créneaux
+  if (toolName === 'getAvailableSlots' && toolResult.availableSlots?.length > 0) {
+    return true;
+  }
+  
+  return false;
+}
+
+function formatButtonResponse(toolResult, toolName) {
+  // Si le tool a déjà formaté les actions
+  if (toolResult.actions) {
+    return {
+      role: "assistant",
+      type: "button_response",
+      message: toolResult.message,
+      actions: toolResult.actions,
+      disableInput: true,
+      context: toolResult.context || {}
+    };
+  }
+  
+  // Sinon, on formate selon le tool
+  switch(toolName) {
+    case 'getAvailableSlots':
+      return formatSlotsAsButtons(toolResult);
+    default:
+      return toolResult;
+  }
+}
+
+function formatSlotsAsButtons(toolResult) {
+  const slots = toolResult.availableSlots || [];
+  const date = toolResult.date || 'cette date';
+  
+  if (slots.length === 0) {
+    return {
+      role: "assistant",
+      type: "button_response",
+      message: `Aucun créneau disponible pour ${date}. Voulez-vous essayer une autre date ?`,
+      disableInput: true,
+      actions: [
+        {
+          id: "back",
+          label: "← Choisir une autre date",
+          value: { action: "back", step: "date_selection" },
+          style: "secondary"
+        }
+      ],
+      context: { step: "time_selection", selectedDate: date }
+    };
+  }
+  
+  return {
+    role: "assistant",
+    type: "button_response",
+    message: `✨ Voici les créneaux disponibles pour ${date} :`,
+    disableInput: true,
+    actions: slots.map(time => ({
+      id: `slot_${time}`,
+      label: `🕐 ${time}`,
+      value: {
+        action: "reserve_slot",
+        date: date,
+        time: time
+      },
+      style: "primary",
+      icon: "🕐"
+    })).concat([
+      {
+        id: "back_to_dates",
+        label: "← Choisir une autre date",
+        value: { action: "back", step: "date_selection" },
+        style: "secondary"
+      }
+    ]),
+    context: {
+      step: "time_selection",
+      selectedDate: date
+    }
+  };
+}
+
 module.exports = async function runAgent({ messages, user }) {
     const llm = createLLMClient();
   
@@ -99,7 +189,7 @@ module.exports = async function runAgent({ messages, user }) {
     if (typeof mcpService[toolName] !== "function") {
       return {
         role: "assistant",
-        content: `Erreur interne : l’outil '${toolName}' n’existe pas côté serveur.`,
+        content: `Erreur interne : l'outil '${toolName}' n'existe pas côté serveur.`,
       };
     }
   
@@ -108,6 +198,20 @@ module.exports = async function runAgent({ messages, user }) {
     try {
       const finalParams = { ...params, userId: user?.id };
       const mainResult = await mcpService[toolName](finalParams);
+      
+      // ✅ CHECK : Retourner des boutons ?
+      if (shouldReturnButtons(mainResult, toolName)) {
+        if (user?.id && (first.usage)) {
+          try {
+            await updateLlmUsage(user.id, first.usage);
+          } catch (e) {
+            console.error("[agent.runner] updateLlmUsage error:", e);
+          }
+        }
+        return formatButtonResponse(mainResult, toolName);
+      }
+      
+      // Sinon, flow normal (avec 2e appel LLM)
       toolPayload[toolName] = mainResult;
   
       if (
@@ -127,7 +231,7 @@ module.exports = async function runAgent({ messages, user }) {
       console.error("[agent.runner] tool error:", err);
       return {
         role: "assistant",
-        content: `L’outil '${toolName}' a échoué : ${err.message}`,
+        content: `L'outil '${toolName}' a échoué : ${err.message}`,
       };
     }
   

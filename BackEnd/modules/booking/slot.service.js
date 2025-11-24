@@ -80,7 +80,55 @@ async function reserveSlotDB({ userId, date, time, service }) {
   };
 }
 
+// ✅ NOUVELLE FONCTION: Avec fallback aux dates alternatives
+async function getAvailableSlotsWithAlternativesDB(date) {
+  // 1. Chercher slots pour la date demandée
+  const slots = await getAvailableSlotsDB(date);
+  
+  if (slots.length > 0) {
+    // ✅ Slots trouvés
+    return {
+      success: true,
+      type: "slots",
+      message: `✨ Créneaux disponibles le ${date}`,
+      date: date,
+      availableSlots: slots,
+    };
+  }
+  
+  // ✅ Aucun slot → Chercher les dates alternatives (±2 jours)
+  const alternatives = [];
+  const dateObj = new Date(date);
+  
+  for (let offset = -2; offset <= 2; offset++) {
+    if (offset === 0) continue; // Sauter le jour original
+    
+    const altDate = new Date(dateObj);
+    altDate.setDate(altDate.getDate() + offset);
+    const altDateStr = altDate.toISOString().split('T')[0];
+    
+    const altSlots = await getAvailableSlotsDB(altDateStr);
+    
+    if (altSlots.length > 0) {
+      alternatives.push({
+        date: altDateStr,
+        slotsCount: altSlots.length,
+        slots: altSlots
+      });
+    }
+  }
+  
+  return {
+    success: true,
+    type: "alternatives",
+    message: `📅 Aucun créneau le ${date}. Voici les dates proches :`,
+    originalDate: date,
+    alternatives: alternatives,
+  };
+}
+
 module.exports = {
   getAvailableSlotsDB,
+  getAvailableSlotsWithAlternativesDB,
   reserveSlotDB,
 };

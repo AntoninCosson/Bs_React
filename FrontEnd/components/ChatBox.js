@@ -3,17 +3,16 @@ import { mcpHealth, mcpConfig, mcpCall } from "../lib/mcp";
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "react-redux";
 import { mcpAgent } from "../lib/mcp";
+import ChatActionButtons from "./ChatActionButtons";
+import Calendar from "./Calendar";
 
 export default function Chatbox() {
-  const [agentMode, setAgentMode] = useState(false);
+  const [disableInput, setDisableInput] = useState(false);
+
+  const [flowStep, setFlowStep] = useState("menu");
 
   const store = useStore();
-  const [messages, setMessages] = useState([
-    {
-      role: "system",
-      text: "Bonjour ! Je peux t'aider à réserver : donne une date (YYYY-MM-DD), puis une heure (HH:MM), Je t’enverrai la confirmation automatiquement.",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [bookingState, setBookingState] = useState("getDate");
   const [ctx, setCtx] = useState({
@@ -21,6 +20,7 @@ export default function Chatbox() {
     time: "",
     reservationId: "",
   });
+  const [selectedDate, setSelectedDate] = useState("");
 
   const messagesEndRef = useRef(null);
   const scrollRef = useRef(null);
@@ -40,6 +40,38 @@ export default function Chatbox() {
   const MAX_CHARS = 400;
 
   useEffect(() => {
+    const loadWelcome = async () => {
+      const state = store.getState();
+      const token = state.user?.accessToken;
+
+      if (!token) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/mcp/welcome`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.status === 401) return;
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          const normalizedMsg = {
+            ...data.data,
+            text: data.data.message,
+            content: data.data.message,
+          };
+          setMessages([normalizedMsg]);
+          setDisableInput(normalizedMsg.disableInput || false);
+        }
+      } catch (e) {
+        console.error("[ChatBox] Welcome error:", e);
+      }
+    };
+
+    loadWelcome();
+  }, [store, API_BASE]);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
   }, [messages]);
 
@@ -47,8 +79,181 @@ export default function Chatbox() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  function push(role, text) {
-    setMessages((prev) => [...prev, { role, text }]);
+  function push(role, text, type = "text") {
+    setMessages((prev) => [...prev, { role, text, type }]);
+  }
+
+  function getFlowButtons() {
+    if (flowStep === "menu") return null;
+
+    if (flowStep === "date_selection") {
+      return {
+        role: "assistant",
+        type: "calendar",
+        message: "Vers quelles dates seriez-vous disponible ?",
+        disableInput: true,
+        context: { step: "date_selection" },
+      };
+    }
+
+    if (flowStep === "free_chat") return null;
+
+    return null;
+  }
+
+  async function onActionClick(action) {
+    const actionType = action.value?.action;
+
+    push("user", action.label, "action");
+
+    if (actionType === "back_to_menu") {
+      setFlowStep("menu");
+
+      const token = store.getState().user.accessToken;
+      const res = await fetch(`${API_BASE}/mcp/welcome`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success && data.data) {
+        const normalizedMsg = {
+          ...data.data,
+          text: data.data.message,
+          content: data.data.message,
+        };
+        setMessages([normalizedMsg]);
+        setDisableInput(normalizedMsg.disableInput || false);
+      }
+      return;
+    }
+
+    if (actionType === "show_calendar") {
+      setFlowStep("date_selection");
+      const buttons = getFlowButtons();
+      if (buttons) {
+        setMessages((prev) => [...prev, buttons]);
+      }
+      return;
+    }
+
+    if (actionType === "free_chat") {
+      setFlowStep("free_chat");
+      setBookingState(null);
+      setDisableInput(false);
+      return;
+    }
+
+    if (actionType === "back_to_calendar") {
+      setFlowStep("date_selection");
+      return;
+    }
+
+    if (actionType === "reserve_slot") {
+      // TODO: Réserver le slot (étape 3)
+      push(
+        "system",
+        `Réservation: ${action.value.date} à ${action.value.time}`
+      );
+      return;
+    }
+
+    if (actionType === "select_date") {
+      // TODO: Appeler getAvailableSlots
+      push("system", `Date sélectionnée: ${action.value.date}`);
+      // On verra ça à l'étape 2
+      return;
+    }
+
+    if (actionType === "select_alternative_date") {
+      handleDateSelect(action.value.date);
+      return;
+    }
+  }
+
+  async function handleDateSelect(date) {
+    setSelectedDate(date);
+    push("user", `📅 ${date}`, "action");
+
+    try {
+      setIsSending(true);
+
+      // ✅ Appeler la nouvelle fonction (retourne slots OU alternatives)
+      const res = await mcpCall(
+        "getAvailableSlots",
+        { date },
+        { getState: store.getState }
+      );
+
+      if (!res?.success) {
+        push(
+          "system",
+          `Erreur: ${res?.message || "Impossible de récupérer les créneaux"}`
+        );
+        return;
+      }
+
+      // ✅ CAS 1: Slots trouvés
+      if (res.type === "slots") {
+        const slots = res.availableSlots || [];
+        const message = {
+          role: "assistant",
+          type: "button_response",
+          message: res.message,
+          disableInput: true,
+          actions: slots
+            .map((time) => ({
+              id: `slot_${time}`,
+              label: `🕐 ${time}`,
+              value: { action: "reserve_slot", date, time },
+              style: "primary",
+            }))
+            .concat([
+              {
+                id: "back_calendar",
+                label: "← Choisir une autre date",
+                value: { action: "back_to_calendar" },
+                style: "secondary",
+              },
+            ]),
+        };
+
+        setMessages((prev) => [...prev, message]);
+        setFlowStep("time_selection");
+        return;
+      }
+
+      // ✅ CAS 2: Pas de slots, afficher alternatives
+      if (res.type === "alternatives") {
+        const message = {
+          role: "assistant",
+          type: "button_response",
+          message: res.message,
+          disableInput: true,
+          actions: res.alternatives
+            .map((alt) => ({
+              id: `alt_date_${alt.date}`,
+              label: `📅 ${alt.date} (${alt.slotsCount} slots)`,
+              value: { action: "select_alternative_date", date: alt.date },
+              style: "primary",
+            }))
+            .concat([
+              {
+                id: "back_calendar2",
+                label: "← Choisir une autre date",
+                value: { action: "back_to_calendar" },
+                style: "secondary",
+              },
+            ]),
+        };
+
+        setMessages((prev) => [...prev, message]);
+        setFlowStep("time_selection");
+        return;
+      }
+    } catch (e) {
+      push("system", `Erreur: ${e.message}`);
+    } finally {
+      setIsSending(false);
+    }
   }
 
   useEffect(() => {
@@ -106,7 +311,7 @@ export default function Chatbox() {
           `Erreur: ${
             data.error ||
             data.message ||
-            "Impossible d’ajouter l’acompte au panier."
+            "Impossible d'ajouter l'acompte au panier."
           }`
         );
       }
@@ -116,9 +321,8 @@ export default function Chatbox() {
   }
 
   async function onSend(e) {
-
     e?.preventDefault?.();
-    if (isSending || quotaExceeded) return;
+    if (isSending || quotaExceeded || disableInput) return;
 
     const text = input.trim();
     if (!text) return;
@@ -133,20 +337,6 @@ export default function Chatbox() {
 
     try {
       setIsSending(true);
-
-      if (agentMode) {
-        const history = messages.map((m) => ({
-          role: m.role,
-          content: m.text,
-        }));
-        const result = await mcpAgent(
-          [...history, { role: "user", content: text }],
-          { getState: store.getState }
-        );
-
-        push(result.role, result.content);
-        return;
-      }
 
       if (quotaExceeded) setQuotaExceeded(false);
 
@@ -175,6 +365,20 @@ export default function Chatbox() {
           `Créneaux le ${date}:\n${list}\n\nChoisis une heure (HH:MM).`
         );
         setBookingState("getTime");
+        return;
+      }
+
+      if (flowStep === "free_chat") {
+        const history = messages.map((m) => ({
+          role: m.role,
+          content: m.text || m.content || m.message || "",
+        }));
+        const result = await mcpAgent(
+          [...history, { role: "user", content: text }],
+          { getState: store.getState }
+        );
+      
+        push(result.role, result.content);
         return;
       }
 
@@ -286,40 +490,54 @@ export default function Chatbox() {
       <div style={styles.header}>
         <div style={styles.dot} />
         <div style={{ fontWeight: 600 }}>Assistant RDV</div>
-        <div style={{ marginLeft: "auto", fontSize: 12, opacity: 0.8 }}>
-          MCP
-        </div>
-
-        <div style={{ marginLeft: 10 }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={agentMode}
-              onChange={(e) => setAgentMode(e.target.checked)}
-            />
-            Agent LLM
-          </label>
-        </div>
       </div>
 
       <div ref={scrollRef} style={styles.messages}>
         {messages.map((m, i) => (
-          <div
-            key={i}
-            style={m.role === "user" ? styles.msgUser : styles.msgAssistant}
-          >
-            {renderMessageText(m)}
+          <div key={i}>
+            {m.type === "button_response" ? (
+              <ChatActionButtons message={m} onActionClick={onActionClick} />
+            ) : (
+              <div
+                style={m.role === "user" ? styles.msgUser : styles.msgAssistant}
+              >
+                {renderMessageText(m)}
+              </div>
+            )}
+            {flowStep !== "menu" &&
+              flowStep !== "free_chat" &&
+              getFlowButtons() && (
+                <div style={styles.msgAssistant}>
+                  <div>{getFlowButtons().message}</div>
+                  {getFlowButtons().type === "calendar" && (
+                    <Calendar onDateSelect={handleDateSelect} />
+                  )}
+                  <button
+                    onClick={() => {
+                      setFlowStep("menu");
+                    }}
+                    style={styles.backBtn}
+                  >
+                    ← Retour
+                  </button>
+                </div>
+              )}
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={onSend} style={styles.inputRow}>
+      {/* ✅ NEW: Input disparaît si disableInput === true */}
+      <form
+        onSubmit={onSend}
+        style={{ ...styles.inputRow, display: disableInput ? "none" : "flex" }}
+      >
         <input
           style={styles.input}
           value={input}
           onChange={handleChange}
-          placeholder="Écris ici…"
+          placeholder="Ou tapez votre message…"
+          disabled={disableInput}
         />
         {quotaExceeded && (
           <div style={{ color: "#f87171", padding: "8px", fontSize: 12 }}>
@@ -330,15 +548,15 @@ export default function Chatbox() {
         <button
           style={styles.btn}
           type="submit"
-          disabled={isSending || quotaExceeded}
+          disabled={isSending || quotaExceeded || disableInput}
         >
           {quotaExceeded ? "Quota atteint" : "Envoyer"}
         </button>
       </form>
 
       <div style={styles.hint}>
-        {input.length}/{MAX_CHARS} caractères • Essayez : “Montre les créneaux”,
-        “Réserve 2025-11-11 11:00”. “Confirme à email@domain.com”.
+        {input.length}/{MAX_CHARS} caractères • Essayez : "Montre les créneaux",
+        "Réserve 2025-11-11 11:00". "Confirme à email@domain.com".
       </div>
     </div>
   );
@@ -437,6 +655,16 @@ const styles = {
     color: "#1a1a1a",
     fontWeight: 700,
     cursor: "pointer",
+  },
+  backBtn: {
+    marginTop: 10,
+    padding: "10px 12px",
+    borderRadius: 8,
+    background: "#2a2f42",
+    border: "1px solid #323a55",
+    color: "#94a3b8",
+    cursor: "pointer",
+    fontSize: 14,
   },
   hint: { fontSize: 12, opacity: 0.7, padding: "4px 10px 10px" },
 };

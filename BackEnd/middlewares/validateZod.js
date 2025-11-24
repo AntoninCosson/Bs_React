@@ -5,17 +5,15 @@ const { ZodError } = require('zod');
 /**
  * Validates request body against a Zod schema
  * @param {import('zod').ZodSchema} schema - Zod schema to validate against
- * @returns {Function} Express middleware
+ * @returns {Function}
  */
 function validateBody(schema) {
   return (req, res, next) => {
     try {
-      // Validate and parse body
       req.body = schema.parse(req.body);
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        // Format Zod errors for better readability
         const errors = error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message,
@@ -28,7 +26,6 @@ function validateBody(schema) {
         });
       }
 
-      // Other errors (shouldn't happen normally)
       console.error('[validateZod] Unexpected error:', error);
       return res.status(500).json({
         success: false,
@@ -38,9 +35,6 @@ function validateBody(schema) {
   };
 }
 
-/**
- * Validates request query params against a Zod schema
- */
 function validateQuery(schema) {
   return (req, res, next) => {
     try {

@@ -3,14 +3,13 @@
 /**
  * Quick Test Script - Vérification des routes critiques
  * Usage: node quick-test.js
- * Prérequis: Le serveur doit tourner sur http://localhost:3000
+ * Prérequis: Le serveur doit tourner sur http://localhost:3000 ou /.env BACKEND_URL
  */
 
 const http = require('http');
 
 const BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 
-// Couleurs pour le terminal
 const colors = {
   reset: '\x1b[0m',
   green: '\x1b[32m',
