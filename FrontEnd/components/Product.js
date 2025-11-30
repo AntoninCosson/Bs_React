@@ -40,7 +40,7 @@ function Product() {
           dispatch,
         });
 
-        if (res.ok && res.data?.result) {
+        if (res.ok && res.data?.success) {
           const uiCart = (res.data.cart || [])
             .filter((i) => i?.productId)
             .map((i) => ({ ...i.productId, quantity: i.quantity }));
@@ -73,74 +73,84 @@ function Product() {
 
   return (
     <div className={prodStyles.body}>
-      {products.map((data, i) => {
-        return (
-          <div className={prodStyles.containerProducts}>
-            <div key={i} className={prodStyles.Product}>
-              <div className={prodStyles.imgDiv}>
-                <img src={`/Artwork/${data.img}`} className={prodStyles.img} />
+      {products
+        .filter((data) => data.category !== "Deposit")
+        .map((data, i) => {
+          return (
+            <div
+              key={data._id || data.id}
+              className={prodStyles.containerProducts}
+            >
+              <div className={prodStyles.Product}>
+                <div className={prodStyles.imgDiv}>
+                  <img
+                    src={data.img ? `/Artwork/${data.img}` : "/placeholder.jpg"}
+                    className={prodStyles.img}
+                  />
 
-                <div className={prodStyles.infos}>
-                  <div className={prodStyles.descriptionDiv}>{data.name}</div>
+                  <div className={prodStyles.infos}>
+                    <div className={prodStyles.descriptionDiv}>{data.name}</div>
 
-                  <div className={prodStyles.descriptionDiv}>
-                    {data.description}
-                  </div>
-
-                  <div className={prodStyles.descriptionDiv}>{data.size}</div>
-
-                  <div className={prodStyles.descriptionDiv}>{data.price}</div>
-
-                  <div className={prodStyles.descriptionDiv}>
-                    {data.category}
-                  </div>
-
-                  <div className={prodStyles.descriptionDiv}>
-                    {data.quantity}
-                  </div>
-
-                  <div className={prodStyles.descriptionDiv}>
-                    {data.dateOnline}
-                  </div>
-
-                  <div className={prodStyles.descriptionDiv}>
-                    {data.promotion}
-                  </div>
-
-                  <div className={prodStyles.btns}>
-                    <div
-                      icon={faCartShopping}
-                      className={prodStyles.btnAddToCart}
-                    >
-                      -3
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.description}
                     </div>
 
-                    <div className={prodStyles.btnAndanimDiv}>
-                      {showAddedAnimation === i && (
-                        <div className={prodStyles.AddedAnimDiv}>
-                          <img
-                            src="/Anim/AddedAnimation.gif"
-                            className={prodStyles.AddedAnim}
-                            alt="Added animation"
-                          />
-                        </div>
-                      )}
-                      <FontAwesomeIcon
+                    <div className={prodStyles.descriptionDiv}>{data.size}</div>
+
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.price}
+                    </div>
+
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.category}
+                    </div>
+
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.quantity}
+                    </div>
+
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.dateOnline}
+                    </div>
+
+                    <div className={prodStyles.descriptionDiv}>
+                      {data.promotion}
+                    </div>
+
+                    <div className={prodStyles.btns}>
+                      <div
                         icon={faCartShopping}
-                        className={
-                          prodStyles.btnAddToCart +
-                          (jumpAddIndex === i ? " " + prodStyles.btnJump : "")
-                        }
-                        onClick={() => handleAdd(data, i)}
-                      ></FontAwesomeIcon>
+                        className={prodStyles.btnAddToCart}
+                      >
+                        -3
+                      </div>
+
+                      <div className={prodStyles.btnAndanimDiv}>
+                        {showAddedAnimation === i && (
+                          <div className={prodStyles.AddedAnimDiv}>
+                            <img
+                              src="/Anim/AddedAnimation.gif"
+                              className={prodStyles.AddedAnim}
+                              alt="Added animation"
+                            />
+                          </div>
+                        )}
+                        <FontAwesomeIcon
+                          icon={faCartShopping}
+                          className={
+                            prodStyles.btnAddToCart +
+                            (jumpAddIndex === i ? " " + prodStyles.btnJump : "")
+                          }
+                          onClick={() => handleAdd(data, i)}
+                        ></FontAwesomeIcon>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 }

@@ -34,6 +34,7 @@ router.post(
       if (event.type === "checkout.session.completed") {
         const sessionId = event.data.object.id;
 
+
         const session = await stripe.checkout.sessions.retrieve(sessionId, {
           expand: [
             "line_items",
