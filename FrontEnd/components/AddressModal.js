@@ -136,7 +136,7 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
       });
 
       const v = await resp.json();
-      if (!v.result)
+      if (!v.success)
         throw new Error(v.error || "Validation d’adresse impossible");
 
       const shippingData = v.isValid ? v.normalized : _shipping;
@@ -162,7 +162,7 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
       const data = res?.data ?? res;
       const checkoutUrl = data?.url || data?.sessionUrl || data?.session?.url;
 
-      if (res?.ok && data?.result && checkoutUrl) {
+      if (res?.ok && data?.success && checkoutUrl) {
         window.location.href = checkoutUrl;
       } else {
         throw new Error(data?.error || "Création de session Stripe échouée");

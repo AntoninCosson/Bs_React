@@ -73,7 +73,7 @@ function HomeButtons() {
           getState: store.getState,
           dispatch,
         });
-        if (res.ok && res.data?.result) {
+        if (res.ok && res.data?.success) {
           const uiCart = res.data.cart
             .filter((i) => i?.productId)
             .map((i) => ({ ...i.productId, quantity: i.quantity }));
@@ -144,7 +144,7 @@ function HomeButtons() {
       getState: store.getState,
       dispatch,
     });
-    if (res.ok && res.data?.result) {
+    if (res.ok && res.data?.success) {
       const uiCart = (res.data.cart || [])
         .filter((i) => i?.productId)
         .map((i) => ({ ...i.productId, quantity: i.quantity }));

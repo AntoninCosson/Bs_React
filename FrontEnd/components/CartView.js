@@ -33,7 +33,7 @@ export default function CartView({ onClose }) {
       try {
         const r = await fetch(`${API_URL}/payments/session/${session_id}`);
         const data = await r.json();
-        if (data.result) setSummary(data);
+        if (data.success) setSummary(data);
       } catch (e) {}
     })();
   }, [thanks, session_id]);
@@ -119,7 +119,7 @@ export default function CartView({ onClose }) {
         getState: store.getState,
         dispatch,
       });
-      if (res.ok && res.data?.result) {
+      if (res.ok && res.data?.success) {
         const ui = res.data.cart
           .filter((i) => i?.productId)
           .map((i) => ({ ...i.productId, quantity: i.quantity }));
@@ -154,7 +154,7 @@ export default function CartView({ onClose }) {
       getState: store.getState,
       dispatch,
     });
-    if (res.ok && res.data?.result) {
+    if (res.ok && res.data?.success) {
       window.location.href = res.data.url;
     } else {
       alert(res.data?.error || "Impossible de démarrer le paiement");
