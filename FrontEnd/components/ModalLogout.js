@@ -13,17 +13,16 @@ function ModalLogout({ show, onClose }) {
 
   const handleLogout = () => {
     localStorage.removeItem("guestCart");
-
     dispatch(clearCart());
-
     dispatch(logout());
     onClose();
   };
 
   return (
-    <div className={Modalstyle.logoutcontainer}>
-      <div className={Modalstyle.logoutDiv}>
+    <div data-component="LogoutModalBackdrop" className={Modalstyle.logoutcontainer}>
+      <div data-component="LogoutModalContent" className={Modalstyle.logoutDiv}>
         <div
+          data-component="LogoutButton"
           className={Modalstyle.logout}
           onClick={() => {
             handleLogout();
@@ -33,7 +32,11 @@ function ModalLogout({ show, onClose }) {
           Logout
         </div>
 
-        <button className={Modalstyle.closeLogout} onClick={onClose}>
+        <button 
+          data-component="LogoutModalCloseButton" 
+          className={Modalstyle.closeLogout} 
+          onClick={onClose}
+        >
           X
         </button>
       </div>

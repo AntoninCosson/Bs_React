@@ -1,9 +1,11 @@
-// components/Modal.jsx
+// components/ModalChatBox.jsx
 import React, { useEffect } from "react";
 
 export default function Modal({ open, onClose, children }) {
   useEffect(() => {
-    function onKey(e) { if (e.key === "Escape") onClose?.(); }
+    function onKey(e) { 
+      if (e.key === "Escape") onClose?.(); 
+    }
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
@@ -12,15 +14,25 @@ export default function Modal({ open, onClose, children }) {
 
   return (
     <div
+      data-component="ChatModalBackdrop"
       role="dialog"
       aria-modal="true"
       aria-label="Chat de réservation"
       style={styles.backdrop}
       onClick={(e) => { if (e.target === e.currentTarget) onClose?.(); }}
     >
-      <div style={styles.panel}>
-        <button style={styles.close} onClick={onClose} aria-label="Fermer">×</button>
-        {children}
+      <div data-component="ChatModalContent" style={styles.panel}>
+        <button 
+          data-component="ChatModalCloseButton"
+          style={styles.close} 
+          onClick={onClose} 
+          aria-label="Fermer"
+        >
+          ×
+        </button>
+        <div data-component="ChatModalChildren">
+          {children}
+        </div>
       </div>
     </div>
   );

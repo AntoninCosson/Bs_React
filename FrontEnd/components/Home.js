@@ -30,9 +30,9 @@ import { faUser, faCartShopping } from "@fortawesome/free-solid-svg-icons";
 
 function HomeButtons() {
   const store = useStore();
-  const shopRef = useRef(null); // Pour manip hors DOM
-  const portfolioRef = useRef(null); // ""
-  const chairRef = useRef(null); // ""
+  const shopRef = useRef(null);
+  const portfolioRef = useRef(null);
+  const chairRef = useRef(null);
 
   const [areButtonHomesVisible, setAreButtonHomesVisible] = useState(true);
   const [isChairVisible, setIsChairVisible] = useState(false);
@@ -135,7 +135,6 @@ function HomeButtons() {
         localStorage.setItem(key, JSON.stringify(arr));
       }
       dispatch(removeFromCartByIndex({ index: idx }));
-
       return;
     }
 
@@ -153,86 +152,83 @@ function HomeButtons() {
   };
 
   return (
-    <div className={homeStyles.body}>
-      {/* Header */}
-      <div className={homeStyles.header}>
-        <div className={homeStyles.headerBtnBlock}>
+    <div data-component="Home" className={homeStyles.body}>
+      {/* ===== HEADER ===== */}
+      <div data-component="HomeHeader" className={homeStyles.header}>
+        <div data-component="HeaderButtonBlock" className={homeStyles.headerBtnBlock}>
           {isLogged && (
-            <h2 className={homeStyles.Displayusername}>@{user.username}</h2>
+            <h2 data-component="UserUsername" className={homeStyles.Displayusername}>
+              @{user.username}
+            </h2>
           )}
 
           <FontAwesomeIcon
             icon={faUser}
+            data-component="UserLoginButton"
             className={homeStyles.btnConnect}
             onClick={() => handleShowLogin()}
           />
 
           <div
+            data-component="CartButtonContainer"
             className={homeStyles.btnCartDiv}
-            onMouseEnter={() => {
-              setIsHovered(true);
-              // console.log("btnCartDiv");
-            }}
-            onMouseLeave={() => {
-              setIsHovered(false);
-              // console.log("Quit btnCartDiv");
-            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
             <FontAwesomeIcon
               icon={faCartShopping}
+              data-component="CartIcon"
               className={homeStyles.btnCart}
-            ></FontAwesomeIcon>
-            <div className={homeStyles.btnCartCount}>{cart.length}</div>
+            />
+            <div data-component="CartItemCount" className={homeStyles.btnCartCount}>
+              {cart.length}
+            </div>
           </div>
         </div>
 
-        {/* Hover */}
-
+        {/* ===== CART DROPDOWN ===== */}
         <div
+          data-component="CartDropdownTrigger"
           className={homeStyles.cartWrapper}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-        ></div>
+        />
 
         <div
-          className={`${homeStyles.btnCartHover} ${
-            isHovered ? homeStyles.show : ""
-          }`}
+          data-component="CartDropdownContent"
+          className={`${homeStyles.btnCartHover} ${isHovered ? homeStyles.show : ""}`}
         >
           <div
+            data-component="CartItemsListContainer"
             className={homeStyles.cartWrapper2}
-            onMouseEnter={() => {
-              setIsHovered(true);
-              // console.log("cartWrapper2");
-            }}
-            onMouseLeave={() => {
-              setIsHovered(false);
-              // console.log("Quit cartWrapper2");
-            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
           >
-            <div className={homeStyles.overflow}>
+            <div data-component="CartItemsScrollable" className={homeStyles.overflow}>
               {cart.map((data, i) => (
-                <div key={i}>
-                  <div className={homeStyles.cartContainer}>
-                    <div>
-                      <div className={homeStyles.nameInCart}>{data.name}</div>
-                      <div className={homeStyles.sizeInCart}>{data.size}</div>
-                      <div className={homeStyles.priceInCart}>
+                <div key={i} data-component="CartItemEntry">
+                  <div data-component="CartItemRow" className={homeStyles.cartContainer}>
+                    <div data-component="CartItemDetails">
+                      <div data-component="CartItemName" className={homeStyles.nameInCart}>
+                        {data.name}
+                      </div>
+                      <div data-component="CartItemSize" className={homeStyles.sizeInCart}>
+                        {data.size}
+                      </div>
+                      <div data-component="CartItemPrice" className={homeStyles.priceInCart}>
                         {data.price}€
                       </div>
                     </div>
-                    <div>
-                      <div className={homeStyles.sizeInCart}>
+                    <div data-component="CartItemQuantityInfo">
+                      <div data-component="CartItemQuantityBadge" className={homeStyles.sizeInCart}>
                         Qty: {data.quantity}
                       </div>
                     </div>
-                    <div className={homeStyles.btnDeleteWraper}>
+                    <div data-component="CartItemDeleteWrapper" className={homeStyles.btnDeleteWraper}>
                       <div
+                        data-component="CartItemDeleteButton"
                         className={homeStyles.btnDelete}
-                        onClick={() => {
-                          // console.log("DELETE click", { id: data._id, idx: i });
-                          handleDeleteOneCart(data, i);
-                        }}
+                        onClick={() => handleDeleteOneCart(data, i)}
                       >
                         x
                       </div>
@@ -242,27 +238,26 @@ function HomeButtons() {
               ))}
             </div>
           </div>
-          <div className={homeStyles.cartFooter}>
+
+          {/* ===== CART FOOTER ===== */}
+          <div data-component="CartDropdownFooter" className={homeStyles.cartFooter}>
             <div
+              data-component="CartSummarySection"
               className={homeStyles.cartWrapper3}
-              onMouseEnter={() => {
-                setIsHovered(true);
-                // console.log("cartWrapper3");
-              }}
-              onMouseLeave={() => {
-                setIsHovered(false);
-                // console.log("Quit cartWrapper3");
-              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
             >
-              <div className={homeStyles.subtotalRow}>
-                <span>
-                  Sous-total ({totalItems}{" "}
-                  {totalItems > 1 ? "articles" : "article"}){" "}
+              <div data-component="CartSubtotalRow" className={homeStyles.subtotalRow}>
+                <span data-component="CartSubtotalLabel">
+                  Sous-total ({totalItems} {totalItems > 1 ? "articles" : "article"})
                 </span>
-                <strong> {formatEUR(subTotal)}</strong>
+                <strong data-component="CartSubtotalAmount">
+                  {formatEUR(subTotal)}
+                </strong>
               </div>
 
               <div
+                data-component="ViewFullCartButton"
                 onClick={() => {
                   setIsCartOpen(true);
                   setShowLogin(false);
@@ -273,7 +268,6 @@ function HomeButtons() {
                   setIsShopClicked(false);
                   setIsChairVisible(false);
                   setisChairSavageClicked(false);
-                  setIsShopClicked(false);
                 }}
                 className={homeStyles.GotoCart}
               >
@@ -283,9 +277,8 @@ function HomeButtons() {
           </div>
         </div>
 
-        {/* fin */}
-
-        <div className={loginstyle.logsWraper}>
+        {/* ===== AUTH MODALS ===== */}
+        <div data-component="AuthModalContainer" className={loginstyle.logsWraper}>
           {isLogged && showLogin && !isChairSavageClicked && (
             <ModalLogout
               show={showLogin}
@@ -294,7 +287,7 @@ function HomeButtons() {
             />
           )}
 
-          <div className={homeStyles.SignInUpBody}>
+          <div data-component="SignInSignUpModalWrapper" className={homeStyles.SignInUpBody}>
             {showLogin && !isLogged && !isChairSavageClicked && (
               <ModalSign
                 show={showLogin}
@@ -309,29 +302,34 @@ function HomeButtons() {
           </div>
         </div>
       </div>
-      {/* Fin header */}
+      {/* FIN HEADER */}
 
-      {/* Big Buttons */}
+      {/* ===== MAIN BUTTONS (PORTFOLIO / SHOP / CHAT) ===== */}
       {areButtonHomesVisible && (
-        <div className={homeStyles.bigButtons}>
-          <div ref={portfolioRef} className={homeStyles.divPortfolio}>
+        <div data-component="HomeMainButtonsSection" className={homeStyles.bigButtons}>
+          <div data-component="PortfolioButtonContainer" ref={portfolioRef} className={homeStyles.divPortfolio}>
             <button
+              data-component="PortfolioButton"
               className={homeStyles.svgButton}
               onClick={() => alert("Prout !")}
             >
               <img
+                data-component="PortfolioButtonIcon"
                 className={homeStyles.Portfolio}
                 src="/EcrisIcon/homePORTFOLIO.svg"
+                alt="Portfolio"
               />
             </button>
           </div>
 
-          <div className={homeStyles.divShop}>
-            <button className={homeStyles.svgButton}>
+          <div data-component="ShopButtonContainer" className={homeStyles.divShop}>
+            <button data-component="ShopButtonWrapper" className={homeStyles.svgButton}>
               <img
                 ref={shopRef}
+                data-component="ShopButton"
                 className={homeStyles.Shop}
                 src="/EcrisIcon/home-SHOP.svg"
+                alt="Shop"
                 onClick={() => {
                   setShowLogin(false);
                   setSignin(false);
@@ -347,12 +345,14 @@ function HomeButtons() {
             </button>
           </div>
 
-          <div className={homeStyles.divNextGuest}>
+          <div data-component="ChatButtonContainer" className={homeStyles.divNextGuest}>
             <button
+              data-component="ChatOpenButton"
               className={homeStyles.svgButton}
               onClick={() => setChatOpen(true)}
             >
               <img
+                data-component="ChatButtonIcon"
                 className={homeStyles.NextGuest}
                 src="/EcrisIcon/home-NEXTGUEST.svg"
                 alt="Prendre RDV"
@@ -365,19 +365,33 @@ function HomeButtons() {
         </div>
       )}
 
-      {isShopClicked && <Shop username={user.username} />}
-
-      {showWhereIsChairBtn && (
-        <WhereIsChairButton
-          onReveal={handleRevealChair}
-          shopRef={shopRef}
-          showWIC={showWhereIsChairBtn}
-        />
+      {/* ===== SHOP SECTION ===== */}
+      {isShopClicked && (
+        <div data-component="ShopSection">
+          <Shop username={user.username} />
+        </div>
       )}
 
-      {isCartOpen && <CartView onClose={() => setIsCartOpen(false)} />}
+      {/* ===== WHERE IS CHAIR BUTTON ===== */}
+      {showWhereIsChairBtn && (
+        <div data-component="WhereIsChairSection">
+          <WhereIsChairButton
+            onReveal={handleRevealChair}
+            shopRef={shopRef}
+            showWIC={showWhereIsChairBtn}
+          />
+        </div>
+      )}
 
-      <div>
+      {/* ===== CART VIEW MODAL ===== */}
+      {isCartOpen && (
+        <div data-component="CartViewModalSection">
+          <CartView onClose={() => setIsCartOpen(false)} />
+        </div>
+      )}
+
+      {/* ===== CHAIR SAVAGE ANIMATION ===== */}
+      <div data-component="ChairSavageAnimationSection">
         {isChairVisible && (
           <ChairSavage
             chairRef={chairRef}
@@ -388,7 +402,10 @@ function HomeButtons() {
         )}
       </div>
 
-      <div>{isChairSavageClicked && <ChairGame />}</div>
+      {/* ===== CHAIR GAME ===== */}
+      <div data-component="ChairGameSection">
+        {isChairSavageClicked && <ChairGame />}
+      </div>
     </div>
   );
 }

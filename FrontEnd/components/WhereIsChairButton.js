@@ -21,7 +21,6 @@ function WhereIsChairButton({ shopRef, onReveal, show }) {
         );
 
         if (isOverlapping) {
-
           const distMin = window.innerHeight - btnShopLimit.bottom + 1;
           WIC.style.top = `${distMin}px`;
         } else {
@@ -36,11 +35,21 @@ function WhereIsChairButton({ shopRef, onReveal, show }) {
   }, []);
 
   return (
-    <div ref={wIsChairRef} className={homeStyles.divWhereIsChair}>
-      <button className={homeStyles.svgButton} onClick={onReveal}>
+    <div 
+      ref={wIsChairRef} 
+      data-component="WhereIsChairButtonContainer"
+      className={homeStyles.divWhereIsChair}
+    >
+      <button 
+        data-component="WhereIsChairButton"
+        className={homeStyles.svgButton} 
+        onClick={onReveal}
+      >
         <img
+          data-component="WhereIsChairButtonIcon"
           className={homeStyles.whereIsChair}
           src="/EcrisIcon/whereischair.svg"
+          alt="Where is Chair Easter Egg"
         />
       </button>
     </div>

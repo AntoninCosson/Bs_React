@@ -32,6 +32,8 @@ const mcpRouter = require('./routes/mcp.routes');
 const paymentConfirmedRouter = require("./routes/payment-confirmed");
 const cartRouter = require("./routes/cart-reservation");
 
+const analyticsRouter = require('./routes/analytics');
+
 const app = express();
 
 app.use(helmet());
@@ -82,7 +84,8 @@ app.use('/shipping', shippingRouter);
 app.use('/cart', cartRouter)
 
 app.use("/", paymentConfirmedRouter);
-app.use('/mcp', mcpRouter); 
+app.use('/mcp', mcpRouter);
+app.use('/analytics', analyticsRouter); 
 
 // Errors
 

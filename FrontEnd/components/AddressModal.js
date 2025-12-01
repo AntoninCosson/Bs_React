@@ -1,4 +1,4 @@
-// components/AddressModal.js
+// FrontEnd/components/AddressModal.js
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useStore } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
@@ -137,7 +137,7 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
 
       const v = await resp.json();
       if (!v.success)
-        throw new Error(v.error || "Validation d’adresse impossible");
+        throw new Error(v.error || "Validation d'adresse impossible");
 
       const shippingData = v.isValid ? v.normalized : _shipping;
       const billingData = v.isValid ? v.normalized : _billing;
@@ -176,18 +176,33 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
   }
 
   return (
-    <div style={styles.backdrop} onClick={onClose}>
-      <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Adresse de livraison</h3>
+    <div 
+      data-component="AddressModalBackdrop"
+      style={styles.backdrop} 
+      onClick={onClose}
+    >
+      <div 
+        data-component="AddressModalContent"
+        style={styles.modal} 
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 data-component="AddressModalTitle">Adresse de livraison</h3>
 
         {/* Identité */}
-        <div style={styles.row}>
+        <div 
+          data-component="IdentitySection"
+          style={styles.row}
+        >
           <input
+            data-component="FirstNameInput"
+            data-field-name="firstName"
             placeholder="Prénom *"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
           />
           <input
+            data-component="LastNameInput"
+            data-field-name="lastName"
             placeholder="Nom *"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -196,6 +211,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
 
         {/* Téléphone */}
         <input
+          data-component="PhoneInput"
+          data-field-name="phone"
           placeholder="Téléphone *"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
@@ -203,24 +220,41 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
         />
 
         {/* Autocomplete BAN */}
-        <input
-          placeholder="Commencez à taper votre adresse… *"
-          value={banQ}
-          onChange={(e) => setBanQ(e.target.value)}
-        />
-        {banSug.length > 0 && (
-          <ul style={styles.suggest}>
-            {banSug.map((s, i) => (
-              <li key={i} onClick={() => applySuggestion(s)}>
-                {s.label}
-              </li>
-            ))}
-          </ul>
-        )}
+        <div data-component="AddressAutocompleteSection">
+          <input
+            data-component="AddressAutocompleteInput"
+            data-field-name="address_autocomplete"
+            placeholder="Commencez à taper votre adresse… *"
+            value={banQ}
+            onChange={(e) => setBanQ(e.target.value)}
+          />
+          {banSug.length > 0 && (
+            <ul 
+              data-component="AddressSuggestionsList"
+              style={styles.suggest}
+            >
+              {banSug.map((s, i) => (
+                <li 
+                  key={i}
+                  data-component="AddressSuggestionItem"
+                  data-suggestion-index={i}
+                  onClick={() => applySuggestion(s)}
+                >
+                  {s.label}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         {/* Adresse livraison */}
-        <div style={styles.grid}>
+        <div 
+          data-component="ShippingAddressSection"
+          style={styles.grid}
+        >
           <input
+            data-component="ShippingLine1Input"
+            data-field-name="shipping_line1"
             placeholder="Adresse (ligne 1) *"
             value={shipping.line1}
             onChange={(e) =>
@@ -228,6 +262,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
             }
           />
           <input
+            data-component="ShippingLine2Input"
+            data-field-name="shipping_line2"
             placeholder="Complément (ligne 2)"
             value={shipping.line2}
             onChange={(e) =>
@@ -235,6 +271,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
             }
           />
           <input
+            data-component="ShippingPostcodeInput"
+            data-field-name="shipping_postcode"
             placeholder="Code postal *"
             value={shipping.postcode}
             onChange={(e) =>
@@ -242,6 +280,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
             }
           />
           <input
+            data-component="ShippingCityInput"
+            data-field-name="shipping_city"
             placeholder="Ville *"
             value={shipping.city}
             onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
@@ -249,11 +289,18 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
         </div>
 
         {errorMsg && (
-          <p style={{ color: "red", fontSize: 14, marginTop: 4 }}>{errorMsg}</p>
+          <p 
+            data-component="ErrorMessage"
+            style={{ color: "red", fontSize: 14, marginTop: 4 }}
+          >
+            {errorMsg}
+          </p>
         )}
 
         {/* Notes livraison */}
         <textarea
+          data-component="DeliveryNotesInput"
+          data-field-name="delivery_notes"
           placeholder="Instructions de livraison (optionnel)"
           value={deliveryNotes}
           onChange={(e) => setDeliveryNotes(e.target.value)}
@@ -261,6 +308,7 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
 
         {/* Facturation */}
         <label
+          data-component="BillingSameCheckboxLabel"
           style={{
             display: "flex",
             gap: 8,
@@ -269,18 +317,31 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
           }}
         >
           <input
+            data-component="BillingSameCheckbox"
             type="checkbox"
             checked={billingSame}
             onChange={() => setBillingSame((v) => !v)}
           />
-          Utiliser cette adresse pour la facturation
+          <span data-component="BillingSameCheckboxText">
+            Utiliser cette adresse pour la facturation
+          </span>
         </label>
 
         {!billingSame && (
           <>
-            <h4 style={{ marginTop: 10 }}>Adresse de facturation</h4>
-            <div style={styles.grid}>
+            <h4 
+              data-component="BillingAddressSectionTitle"
+              style={{ marginTop: 10 }}
+            >
+              Adresse de facturation
+            </h4>
+            <div 
+              data-component="BillingAddressSection"
+              style={styles.grid}
+            >
               <input
+                data-component="BillingLine1Input"
+                data-field-name="billing_line1"
                 placeholder="Adresse (ligne 1)"
                 value={billing.line1}
                 onChange={(e) =>
@@ -288,6 +349,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
                 }
               />
               <input
+                data-component="BillingPostcodeInput"
+                data-field-name="billing_postcode"
                 placeholder="Code postal"
                 value={billing.postcode}
                 onChange={(e) =>
@@ -295,6 +358,8 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
                 }
               />
               <input
+                data-component="BillingCityInput"
+                data-field-name="billing_city"
                 placeholder="Ville"
                 value={billing.city}
                 onChange={(e) =>
@@ -305,11 +370,22 @@ export default function AddressModal({ open, onClose, defaultEmail }) {
           </>
         )}
 
-        <div style={styles.actions}>
-          <button onClick={onClose} disabled={step === "loading"}>
+        <div 
+          data-component="AddressModalActions"
+          style={styles.actions}
+        >
+          <button 
+            data-component="AddressModalCancelButton"
+            onClick={onClose} 
+            disabled={step === "loading"}
+          >
             Annuler
           </button>
-          <button onClick={validateAndCheckout} disabled={step === "loading"}>
+          <button 
+            data-component="AddressModalSubmitButton"
+            onClick={validateAndCheckout} 
+            disabled={step === "loading"}
+          >
             {step === "loading"
               ? "Vérification…"
               : "Continuer vers le paiement"}

@@ -72,63 +72,118 @@ function Product() {
   // console.log("products:", products)
 
   return (
-    <div className={prodStyles.body}>
+    <div 
+      data-component="ProductGrid"
+      className={prodStyles.body}
+    >
       {products
         .filter((data) => data.category !== "Deposit")
         .map((data, i) => {
           return (
             <div
               key={data._id || data.id}
+              data-component="ProductCard"
+              data-product-id={data._id || data.id}
+              data-product-index={i}
               className={prodStyles.containerProducts}
             >
-              <div className={prodStyles.Product}>
-                <div className={prodStyles.imgDiv}>
+              <div 
+                data-component="ProductCardWrapper"
+                className={prodStyles.Product}
+              >
+                <div 
+                  data-component="ProductImageContainer"
+                  className={prodStyles.imgDiv}
+                >
                   <img
+                    data-component="ProductImage"
                     src={data.img ? `/Artwork/${data.img}` : "/placeholder.jpg"}
                     className={prodStyles.img}
+                    alt={data.name}
                   />
 
-                  <div className={prodStyles.infos}>
-                    <div className={prodStyles.descriptionDiv}>{data.name}</div>
+                  <div 
+                    data-component="ProductDetailsPanel"
+                    className={prodStyles.infos}
+                  >
+                    <div 
+                      data-component="ProductName"
+                      className={prodStyles.descriptionDiv}
+                    >
+                      {data.name}
+                    </div>
 
-                    <div className={prodStyles.descriptionDiv}>
+                    <div 
+                      data-component="ProductDescription"
+                      className={prodStyles.descriptionDiv}
+                    >
                       {data.description}
                     </div>
 
-                    <div className={prodStyles.descriptionDiv}>{data.size}</div>
-
-                    <div className={prodStyles.descriptionDiv}>
-                      {data.price}
+                    <div 
+                      data-component="ProductSize"
+                      className={prodStyles.descriptionDiv}
+                    >
+                      {data.size}
                     </div>
 
-                    <div className={prodStyles.descriptionDiv}>
+                    <div 
+                      data-component="ProductPrice"
+                      className={prodStyles.descriptionDiv}
+                    >
+                      {data.price}€
+                    </div>
+
+                    <div 
+                      data-component="ProductCategory"
+                      className={prodStyles.descriptionDiv}
+                    >
                       {data.category}
                     </div>
 
-                    <div className={prodStyles.descriptionDiv}>
+                    <div 
+                      data-component="ProductStockQuantity"
+                      className={prodStyles.descriptionDiv}
+                    >
                       {data.quantity}
                     </div>
 
-                    <div className={prodStyles.descriptionDiv}>
+                    <div 
+                      data-component="ProductDateOnline"
+                      className={prodStyles.descriptionDiv}
+                    >
                       {data.dateOnline}
                     </div>
 
-                    <div className={prodStyles.descriptionDiv}>
+                    <div 
+                      data-component="ProductPromotion"
+                      className={prodStyles.descriptionDiv}
+                    >
                       {data.promotion}
                     </div>
 
-                    <div className={prodStyles.btns}>
+                    <div 
+                      data-component="ProductActionsContainer"
+                      className={prodStyles.btns}
+                    >
                       <div
-                        icon={faCartShopping}
+                        data-component="ProductDiscount"
                         className={prodStyles.btnAddToCart}
                       >
                         -3
                       </div>
 
-                      <div className={prodStyles.btnAndanimDiv}>
+                      <div 
+                        data-component="AddToCartButtonWrapper"
+                        className={prodStyles.btnAndanimDiv}
+                      >
                         {showAddedAnimation === i && (
-                          <div className={prodStyles.AddedAnimDiv}>
+                          <div 
+                            data-component="AddedAnimation"
+                            className={prodStyles.AddedAnimDiv}
+                          >
                             <img
+                              data-component="AddedAnimationGif"
                               src="/Anim/AddedAnimation.gif"
                               className={prodStyles.AddedAnim}
                               alt="Added animation"
@@ -136,13 +191,15 @@ function Product() {
                           </div>
                         )}
                         <FontAwesomeIcon
+                          data-component="AddToCartButton"
+                          data-product-id={data._id || data.id}
                           icon={faCartShopping}
                           className={
                             prodStyles.btnAddToCart +
                             (jumpAddIndex === i ? " " + prodStyles.btnJump : "")
                           }
                           onClick={() => handleAdd(data, i)}
-                        ></FontAwesomeIcon>
+                        />
                       </div>
                     </div>
                   </div>

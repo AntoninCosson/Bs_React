@@ -92,7 +92,7 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
     const isLogin = mode === "login";
     if (!isLogin) {
       const ok = EMAIL_RE.test(email.trim());
-      setEmailError(ok ? "" : "Format d’e-mail invalide (ex. nom@domaine.com)");
+      setEmailError(ok ? "" : "Format d'e-mail invalide (ex. nom@domaine.com)");
       if (!ok) return;
     }
 
@@ -104,33 +104,39 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
   };
 
   return (
-    <div className={loginStyles.body}>
+    <div data-component="LoginFormWrapper" className={loginStyles.body}>
       <div
+        data-component="LoginFormOverlay"
         className={`${loginStyles.overlay} ${
           mode === "signup" ? loginStyles.overlaySignup : loginStyles.overlay
         }`}
       >
         <FontAwesomeIcon
           icon={faXmark}
+          data-component="LoginFormCloseButton"
           className={loginStyles.close}
           onClick={onHideForm}
         />
-        <div className={loginStyles.container2}>
-          <div className={loginStyles.ThisChairsign}>
+
+        <div data-component="LoginFormContainer" className={loginStyles.container2}>
+          <div data-component="LoginFormChairIcon" className={loginStyles.ThisChairsign}>
             <img
               src="/EcrisIcon/chair.svg"
-              alt=""
+              alt="Chair icon"
               height={60}
               style={loginStyles.ChairSign}
             />
           </div>
 
+          {/* ===== EMAIL INPUT (SIGNUP ONLY) ===== */}
           {mode === "signup" && (
-            <>
+            <div data-component="EmailInputSection">
               <input
                 type="email"
                 placeholder="Email"
                 value={email}
+                data-component="EmailInput"
+                data-field-name="email"
                 className={loginStyles.input}
                 onChange={(e) => {
                   setEmail(e.target.value);
@@ -140,30 +146,46 @@ const Sign = ({ mode, onLoginSuccess, onHideForm }) => {
                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
               />
               {email && emailError && (
-                <div style={{ color: "#c62828", fontSize: 12, marginTop: 4 }}>
+                <div 
+                  data-component="EmailErrorMessage"
+                  style={{ color: "#c62828", fontSize: 12, marginTop: 4 }}
+                >
                   {emailError}
                 </div>
               )}
-            </>
+            </div>
           )}
 
-          <input
-            type="text"
-            placeholder={mode === "login" ? "Username or Email" : "Username"}
-            value={userName}
-            className={loginStyles.input}
-            onChange={(e) => setUserName(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            className={loginStyles.input}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          {/* ===== USERNAME INPUT ===== */}
+          <div data-component="UsernameInputSection">
+            <input
+              type="text"
+              placeholder={mode === "login" ? "Username or Email" : "Username"}
+              value={userName}
+              data-component="UsernameInput"
+              data-field-name="username"
+              className={loginStyles.input}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+          </div>
 
+          {/* ===== PASSWORD INPUT ===== */}
+          <div data-component="PasswordInputSection">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              data-component="PasswordInput"
+              data-field-name="password"
+              className={loginStyles.input}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {/* ===== SUBMIT BUTTON ===== */}
           <button
             disabled={loading}
+            data-component={mode === "login" ? "SignInSubmitButton" : "SignUpSubmitButton"}
             className={loginStyles.signin}
             onClick={sign}
           >

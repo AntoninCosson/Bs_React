@@ -11,6 +11,8 @@ import { PersistGate } from "redux-persist/integration/react";
 import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
+import { analytics } from "../lib/analyticsWrapper";
+
 const reducers = combineReducers({ user, shop });
 const persistConfig = { key: "hackatweeeeeet", storage };
 

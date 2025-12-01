@@ -123,6 +123,7 @@ export default function Chatbox() {
         {before && <span>{before}</span>}
         <br />
         <a
+          data-component="StripeCheckoutLink"
           href={url}
           target="_blank"
           rel="noopener noreferrer"
@@ -130,7 +131,11 @@ export default function Chatbox() {
         >
           Payer la réservation 💳
         </a>
-        <button style={styles.cartBtn} onClick={() => addReservationToCart()}>
+        <button 
+          data-component="AddReservationToCartButton"
+          style={styles.cartBtn} 
+          onClick={() => addReservationToCart()}
+        >
           Ajouter au panier 🛒
         </button>
         {after && (
@@ -216,16 +221,37 @@ export default function Chatbox() {
   }
 
   return (
-    <div style={styles.wrap}>
-      <div style={styles.header}>
-        <div style={styles.dot} />
-        <div style={{ fontWeight: 600 }}>Assistant IA</div>
+    <div 
+      data-component="ChatBoxContainer"
+      style={styles.wrap}
+    >
+      <div 
+        data-component="ChatBoxHeader"
+        style={styles.header}
+      >
+        <div 
+          data-component="ChatBoxStatusDot"
+          style={styles.dot} 
+        />
+        <div 
+          data-component="ChatBoxTitle"
+          style={{ fontWeight: 600 }}
+        >
+          Assistant IA
+        </div>
       </div>
 
-      <div ref={scrollRef} style={styles.messages}>
+      <div 
+        ref={scrollRef} 
+        data-component="ChatBoxMessagesContainer"
+        style={styles.messages}
+      >
         {messages.map((m, i) => (
           <div
             key={i}
+            data-component={`ChatMessage`}
+            data-message-index={i}
+            data-message-role={m.role}
             style={m.role === "user" ? styles.msgUser : styles.msgAssistant}
           >
             {renderMessageText(m)}
@@ -234,8 +260,14 @@ export default function Chatbox() {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={onSend} style={styles.inputRow}>
+      <form 
+        data-component="ChatBoxInputForm"
+        onSubmit={onSend} 
+        style={styles.inputRow}
+      >
         <input
+          data-component="ChatBoxInput"
+          data-field-name="message"
           style={styles.input}
           value={input}
           onChange={handleChange}
@@ -243,6 +275,7 @@ export default function Chatbox() {
           disabled={isSending || quotaExceeded}
         />
         <button
+          data-component="ChatBoxSendButton"
           style={styles.btn}
           type="submit"
           disabled={isSending || quotaExceeded}
@@ -251,7 +284,10 @@ export default function Chatbox() {
         </button>
       </form>
 
-      <div style={styles.hint}>
+      <div 
+        data-component="ChatBoxCharacterCounter"
+        style={styles.hint}
+      >
         {input.length}/{MAX_CHARS} caractères
       </div>
     </div>

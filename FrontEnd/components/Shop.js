@@ -28,8 +28,14 @@ const Shop = ({}) => {
 
   return (
 
-    <div className={shopStyle.body}>
-      <div className={shopStyle.product}>
+    <div 
+      data-component="ShopContainer"
+      className={shopStyle.body}
+    >
+      <div 
+        data-component="ShopProductsGrid"
+        className={shopStyle.product}
+      >
        <Product/>
       </div>
     </div>

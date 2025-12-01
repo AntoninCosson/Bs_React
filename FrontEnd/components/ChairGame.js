@@ -96,7 +96,6 @@ document.body.style.overflow = "hidden";
     if (e.code === "Space" && player.current && !player.current.jumping && !isGameOver) {
       player.current.jump(18);
     } else if (e.code === "Space" && isGameOver){
-      // animateFallingChairRef.current();
       restartGame();
     }
   };
@@ -168,12 +167,10 @@ animateFallingChairRef.current = () => {
     if (!chair.landed) {
       ctx.drawImage(chair.image, chair.x, chair.y, chair.width, chair.height);
       chair.velocityY += chair.gravity;
-      fallingChair.current.x = 90; // Chute Anim sur x
+      fallingChair.current.x = 90;
       chair.y += chair.velocityY;
 
-      // Fin de chute
       if (chair.y >= canvas.height - chair.height - 250) 
-        // 
         {
         chair.y = canvas.height - chair.height - 40;
         chair.landed = true;
@@ -189,23 +186,14 @@ animateFallingChairRef.current = () => {
 
 
 
-  // 
   const imgFond = backgroundImg.current;
   imgFond.src = "/ChairRunGame/chairdecor.png";
   imgFond.onload = () => {
-    
-    // canvas.width  = img.naturalWidth;
-    // canvas.height = img.naturalHeight;
     console.log("Background loaded");
   };
 
   
 
-  // 
- 
-  
-
-  // ////////////
   ChairFallingUtils()
   animateFallingChairRef.current();
 };
@@ -257,25 +245,24 @@ const chCanvas = chairCanvasRef.current;
 chCanvas.width = 800;
 chCanvas.height = 600;
 
-const gravity = 1.2; // valeur gravité
+const gravity = 1.2;
 const sol = 330;
 const ctx = obstaclesCtxRef.current;
 
   player.current = new Player(
     imagesRun.current,
     imagesJump.current,
-    40, // x
-    330, // y
-    133,  // width
-    133   // height
+    40,
+    330,
+    133,
+    133
   );
 
   if (spawnIntervalRef.current) clearTimeout(spawnIntervalRef.current);
       scheduleNextObstacle();
 
 
-//  Game loop
-    let lastTime = performance.now();
+  let lastTime = performance.now();
 
 function gameLoop(now) {
   if (isGameOver) return;
@@ -317,17 +304,17 @@ function checkCollision(player, obstacles) {
 if (!spawnVisible && isGameOver) return;
 
   const playerHitbox = {
-    x: player.x + player.width * 0.57, // absysse hitbox
+    x: player.x + player.width * 0.57,
     y: player.y + player.height * 0.1,         
-    width: player.width * 0.21, // largeur
+    width: player.width * 0.21,
     height: player.height * 0.7           
   };
 
     for (let obs of obstacles) {
       const obstacleHitbox = {
         x: obs.x + obs.width * 0.1,          
-        y: obs.y + obs.height * 0.4, // ordonnées hitbox
-        width: obs.width * 0.8, // largeur hitbox obstacle
+        y: obs.y + obs.height * 0.4,
+        width: obs.width * 0.8,
         height: obs.height * 0.9
       };
           if (
@@ -423,50 +410,72 @@ function restartGame() {
 
 
   return(
-    <div className={ChairGameStyles.body}>
+    <div data-component="ChairGameContainer" className={ChairGameStyles.body}>
 
-<div className={ChairGameStyles.score}>
-    <img
-    className={ChairGameStyles.yourScoreSvg}
-    src="/ChairRunGame/yourscore.svg"
-    />
-    <div className={ChairGameStyles.yourScoreText}>
-    {displayScore}
+      {/* ===== SCORE DISPLAY ===== */}
+      <div data-component="ScoreDisplay" className={ChairGameStyles.score}>
+        <img
+          data-component="ScoreIcon"
+          className={ChairGameStyles.yourScoreSvg}
+          src="/ChairRunGame/yourscore.svg"
+          alt="Your Score"
+        />
+        <div data-component="ScoreValue" className={ChairGameStyles.yourScoreText}>
+          {displayScore}
+        </div>
+      </div>
+
+      {/* ===== CANVAS LAYERS ===== */}
+      <div data-component="CanvasStack" className={ChairGameStyles.canvasStack}>
+        
+        {/* Background Layer */}
+        <div data-component="BackgroundCanvasLayer" className={ChairGameStyles.canvasBackground}> 
+          <canvas 
+            ref={backgroundCanvasRef} 
+            data-component="BackgroundCanvas"
+            className={ChairGameStyles.BackgroundArea}
+          />
+        </div>
+      
+        {/* Obstacles Layer */}
+        <div data-component="ObstaclesCanvasLayer" className={ChairGameStyles.obstaclesArea}>
+          <canvas 
+            ref={obstaclesCanvasRef} 
+            data-component="ObstaclesCanvas"
+            className={ChairGameStyles.obstaclesCanvas} 
+          />
+        </div>
+
+        {/* Player Layer */}
+        <div data-component="PlayerCanvasLayer" className={ChairGameStyles.playerArea}>
+          <canvas 
+            ref={playerCanvasRef} 
+            data-component="PlayerCanvas"
+            className={ChairGameStyles.playerCanvas} 
+          />
+        </div>
+      </div>
+
+      {/* Falling Chair Layer */}
+      <div data-component="FallingChairCanvasLayer" className={ChairGameStyles.fallChairArea}>
+        <canvas 
+          ref={chairCanvasRef} 
+          data-component="FallingChairCanvas"
+          className={ChairGameStyles.fallChairAucuneIdee} 
+        />
+      </div>
+
+      {/* Game Over Modal */}
+      {isGameOver && (
+        <div data-component="GameOverModalWrapper">
+          <GameOverModal 
+            className={ChairGameStyles.GameOverModal}
+            score={finalScore}
+            onRestart={restartGame} 
+          />
+        </div>
+      )}
     </div>
-</div>
-
-
-<div className={ChairGameStyles.canvasStack}>
-    <div className={ChairGameStyles.canvasBackground}> 
-    <canvas ref={backgroundCanvasRef} className={ChairGameStyles.BackgroundArea}/>
-    </div>
- 
-    <div className={ChairGameStyles.obstaclesArea}>
-        <canvas ref={obstaclesCanvasRef} className={ChairGameStyles.obstaclesCanvas} />
-    </div>
-
-<div className={ChairGameStyles.playerArea}>
-  <canvas ref={playerCanvasRef} className={ChairGameStyles.playerCanvas} />
-</div>
-
-</div>
-  <div className={ChairGameStyles.fallChairArea}>
-    <canvas ref={chairCanvasRef} className={ChairGameStyles.fallChairAucuneIdee} />
-</div>
-
-
-{isGameOver && (
-  <GameOverModal 
-    className={ChairGameStyles.GameOverModal}
-    score = {finalScore}
-    onRestart={restartGame} 
-  />
-)}
-
-</div>
-
-
-
   )
 }
 

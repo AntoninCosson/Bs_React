@@ -79,7 +79,7 @@ async function streamAgent({ messages, user, res }) {
             partial: firstResponse.content.slice(0, i + chunkSize),
             timestamp: new Date().toISOString()
           });
-          await new Promise(resolve => setTimeout(resolve, 50));
+          await new Promise(resolve => setTimeout(resolve, 200));
         }
       }
 

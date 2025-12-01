@@ -20,11 +20,12 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
   if (!show) return null;
 
   return (
-    <div className={loginstyle.login}>
-      <div className={loginstyle.container}>
+    <div data-component="SignModalBackdrop" className={loginstyle.login}>
+      <div data-component="SignModalContainer" className={loginstyle.container}>
         {!signin && !signup && (
           <FontAwesomeIcon
             icon={faXmark}
+            data-component="SignModalCloseButton"
             className={loginstyle.close}
             onClick={() => {
               onClose();
@@ -33,21 +34,26 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
           />
         )}
 
-        {/* Sign up */}
-        <div className={loginstyle.txt1}>New here?</div>
+        {/* ===== SIGN UP SECTION ===== */}
+        <div data-component="SignUpSectionLabel" className={loginstyle.txt1}>
+          New here?
+        </div>
         {signup ? (
-          <Login
-            mode="signup"
-            onClose={onClose}
-            onHideForm={hideForm}
-            onLoginSuccess={() => {
-              onClose();
-              hideForm();
-            }}
-          />
+          <div data-component="SignUpFormContainer">
+            <Login
+              mode="signup"
+              onClose={onClose}
+              onHideForm={hideForm}
+              onLoginSuccess={() => {
+                onClose();
+                hideForm();
+              }}
+            />
+          </div>
         ) : (
-          <div className={loginstyle.divBtn}>
+          <div data-component="SignUpButtonWrapper" className={loginstyle.divBtn}>
             <button
+              data-component="SignUpButton"
               className={loginstyle.buttonSignUp}
               onClick={() => {
                 setSignup(true);
@@ -59,21 +65,26 @@ function ModalSign({ show, onClose, setSignin, setSignup, signin, signup }) {
           </div>
         )}
 
-        {/* Sign in */}
-        <div className={loginstyle.txt2}>Welcome back beauty!</div>
+        {/* ===== SIGN IN SECTION ===== */}
+        <div data-component="SignInSectionLabel" className={loginstyle.txt2}>
+          Welcome back beauty!
+        </div>
         {signin ? (
-          <Login
-            onClose={onClose}
-            onHideForm={hideForm}
-            mode="login"
-            onLoginSuccess={() => {
-              onClose();
-              hideForm();
-            }}
-          />
+          <div data-component="SignInFormContainer">
+            <Login
+              onClose={onClose}
+              onHideForm={hideForm}
+              mode="login"
+              onLoginSuccess={() => {
+                onClose();
+                hideForm();
+              }}
+            />
+          </div>
         ) : (
-          <div className={loginstyle.divBtn2}>
+          <div data-component="SignInButtonWrapper" className={loginstyle.divBtn2}>
             <button
+              data-component="SignInButton"
               className={loginstyle.buttonSignin}
               onClick={() => {
                 setSignin(true);
